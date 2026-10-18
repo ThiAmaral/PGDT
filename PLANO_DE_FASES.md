@@ -20,7 +20,7 @@ Base: TCC1 de Paulo Henrique Bressanini Rizzi e o documento "Funcionalidades do 
 | Fase | Nome | RFs | Status |
 |---|---|---|---|
 | 0 | Decisões e preparação do ambiente | — | ✅ |
-| 1 | Fundação, autenticação e usuários | RF01, RF02, RF03, RF04 | ⬜ |
+| 1 | Fundação, autenticação e usuários | RF01, RF02, RF03, RF04 | ✅ |
 | 2 | Cadastros de apoio e Projetos Base | RF05 | ⬜ |
 | 3 | Demandas: abertura e triagem | RF06, RF07 | ⬜ |
 | 4 | Rastreabilidade e comunicação | RF08 | ⬜ |
@@ -105,7 +105,7 @@ Para ligar o banco: abrir o **XAMPP Control Panel** (`C:\xampp\xampp-control.exe
 
 ---
 
-## Fase 1 — Fundação, autenticação e usuários ⬜
+## Fase 1 — Fundação, autenticação e usuários ✅
 
 **RFs:** RF01 Cadastro Acadêmico · RF02 Cadastro Institucional · RF03 Acesso e Recuperação · RF04 Administração
 
@@ -127,18 +127,28 @@ Regras para evitar erro do usuário:
 - **Mesmo modelo de dados:** uma única tabela `usuarios` com `perfil`; os campos específicos ficam nas tabelas de cada perfil.
 
 ### Entregáveis
-- [ ] Layout base responsivo (menu por perfil, tela de login).
-- [ ] Tabelas (ver `docs/DER.md`): `usuarios` (perfil, status, telefone), `estudantes` (matrícula, curso), `demandantes` (escola, cargo), `coordenadores`, `escolas_instituicoes`, `cursos`, `convites`.
-- [ ] Tela "Criar conta" com a escolha do tipo de cadastro (Estudante / Demandante).
-- [ ] RF01: formulário do estudante com validação de domínio; perfil Estudante atribuído automaticamente; status `Pendente`.
-- [ ] RF02: formulário do demandante (escola, cargo, telefone com máscara); status `Pendente`.
-- [ ] Cadastro do Coordenador projeto de extensão por convite do admin (e-mail com link de uso único e prazo de validade); a conta já nasce `Ativo`.
-- [ ] RF03: login, logout, "esqueci minha senha" com token por e-mail e redefinição.
-- [ ] RF04: painel do admin com filtros (nome, e-mail, perfil, status). O admin aprova os usuários, altera o status do usuário (`Ativo`, `Inativo`, `Pendente`, `Rejeitado`) e troca o papel/perfil dos usuários.
+- [x] Layout base responsivo (menu por perfil, tela de login).
+- [x] Tabelas (ver `docs/DER.md`): `usuarios` (perfil, status, telefone), `estudantes` (matrícula, curso), `demandantes` (escola, cargo), `coordenadores`, `escolas_instituicoes`, `cursos`, `convites`.
+- [x] Tela "Criar conta" com a escolha do tipo de cadastro (Estudante / Demandante).
+- [x] RF01: formulário do estudante com validação de domínio; perfil Estudante atribuído automaticamente; status `Pendente`.
+- [x] RF02: formulário do demandante (escola, cargo, telefone com máscara); status `Pendente`.
+- [x] Cadastro do Coordenador projeto de extensão por convite do admin (e-mail com link de uso único e prazo de validade); a conta já nasce `Ativo`.
+- [x] RF03: login, logout, "esqueci minha senha" com token por e-mail e redefinição.
+- [x] RF04: painel do admin com filtros (nome, e-mail, perfil, status). O admin aprova os usuários, altera o status do usuário (`Ativo`, `Inativo`, `Pendente`, `Rejeitado`) e troca o papel/perfil dos usuários.
   - Só usuários `Ativo` conseguem usar o sistema; `Inativo` e `Rejeitado` não fazem login.
   - Rejeitar e inativar pedem confirmação; a troca de perfil mostra o perfil atual e o novo antes de salvar.
-- [ ] Middleware/policies de controle de acesso por perfil (RNF04).
-- [ ] Seeder com um usuário administrador inicial.
+- [x] Middleware/policies de controle de acesso por perfil (RNF04).
+- [x] Seeder com um usuário administrador inicial.
+
+### Como foi implementado (2026-10-18)
+- **Código:** branch `feature/fase1-usuarios`. Model `Usuario` (tabela `usuarios`) no lugar do `User` padrão; enums `Perfil`, `StatusUsuario` e `TipoEscola` em `app/Enums`.
+- **Acesso:** middleware `perfil:admin,...` (`VerificaPerfil`) e `ativo` (`ContaAtiva`): `Pendente` vai para "Cadastro em análise"; `Inativo`/`Rejeitado` são desconectados com a mensagem e o motivo. O login também bloqueia essas contas.
+- **Rotas:** `/cadastro` (escolha), `/cadastro/estudante`, `/cadastro/demandante`, `/convite/{token}`, `/painel`, `/admin/usuarios`, `/admin/convites`. `/register` e `/home` redirecionam para as rotas novas.
+- **Convite:** token de 64 caracteres; no banco fica só o SHA-256. Validade de 7 dias, uso único; um convite novo para o mesmo e-mail cancela o anterior; o admin pode cancelar.
+- **E-mails:** confirmação de e-mail (estudante), aprovação, rejeição com motivo, convite e recuperação de senha, em pt-BR. Em ambiente local o `MAIL_MAILER=log` grava os e-mails em `storage/logs/laravel.log`.
+- **Seeders:** `CursoSeeder` (16 cursos do campus de Alegre) e `AdminSeeder` (usa `ADMIN_NOME`, `ADMIN_EMAIL` e `ADMIN_PASSWORD` do `.env`; sem senha, gera uma aleatória e mostra no terminal).
+- **Testes:** 34 testes de feature (`CadastroTest`, `LoginTest`, `AdminUsuariosTest`, `ConviteTest`) passando no SQLite em memória.
+- **Teste manual no navegador:** cadastro de demandante com escola nova, aviso de e-mail da UFES, máscara de telefone, tela "Cadastro em análise", login do admin, aprovação com e-mail registrado no log e layout no celular.
 
 **Critério de conclusão:** os 4 perfis conseguem se cadastrar ou ser criados, fazer login e ver apenas o seu menu; o admin aprova um estudante e um demandante pendentes.
 
@@ -291,6 +301,8 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-18 | Ciclo de status da demanda sem mudanças automáticas: todos os status são alterados manualmente (coordenador/admin; `Cancelada` também pelo demandante antes de `Em Desenvolvimento`). A tela só sugere o próximo status. | Pedido do autor. |
 | 2026-10-18 | Campos específicos de cada perfil ficam em tabelas 1:1 (`estudantes`, `demandantes`, `coordenadores`), e não em `usuarios`. | O plano tinha duas versões; tabelas por perfil evitam colunas vazias e separam as regras de cada cadastro. |
 | 2026-10-18 | DER aprovado: o demandante escolhe a escola da lista ou digita uma nova (conferida pelo admin na aprovação); membro removido não aparece no RF15; papéis iniciais Membro Desenvolvedor, Responsável Técnico e Apoio de Campo; todo Projeto Base ativo é público por padrão, e o coordenador pode ocultar. | Pedido do autor. |
+| 2026-10-18 | Decisões de implementação da Fase 1: (a) a confirmação de e-mail vale só para o estudante, como decidido na Fase 0; (b) senha com no mínimo 8 caracteres, letras e números; (c) escola digitada pelo demandante nasce inativa e é ativada na aprovação; (d) o admin não altera o próprio status ou perfil; (e) na troca de perfil, os dados do perfil anterior ficam guardados; (f) estudante sem e-mail confirmado não pode ser aprovado. | Segurança e coerência com as decisões da Fase 0; aprovadas pelo autor junto com a Fase 1. |
+| 2026-10-18 | Laravel Boost instalado como dependência de desenvolvimento. | Pedido pelo `CLAUDE.md` do projeto Laravel. |
 
 ## Registro de progresso
 
@@ -304,3 +316,6 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-18 | 0 | Repositório no GitHub configurado (`origin` = github.com/ThiAmaral/PGDT) e branch `main` enviada; fluxo `main` + `feature/*` definido. |
 | 2026-10-18 | 0 | DER completo revisado em `docs/DER.md` (23 tabelas no diagrama + `parametros`); plano ajustado: tabelas por perfil, `papeis_equipe`, `entrega_arquivos`. Diagrama Mermaid validado. Fase 0 aguarda a confirmação de 4 pontos do DER. |
 | 2026-10-18 | 0 | Autor aprovou os 4 pontos do DER. **Fase 0 concluída**: decisões registradas, ambiente pronto, `php artisan serve` conectado ao MySQL e repositório no GitHub atualizado. |
+| 2026-10-18 | 1 | Fase 1 iniciada na branch `feature/fase1-usuarios`. Traduções pt-BR do Laravel instaladas (`lucascudo/laravel-pt-br-localization`). |
+| 2026-10-18 | 1 | Entregáveis da Fase 1 implementados: tabelas por perfil, cadastros separados, convite de coordenador, login com bloqueio por status, recuperação de senha, painel do admin (filtros, aprovação, status, troca de perfil) e menu por perfil. 34 testes passando e fluxo conferido no navegador. Aguarda validação do autor para juntar na `main`. |
+| 2026-10-18 | 1 | Autor aprovou a Fase 1. **Fase 1 concluída**: branch `feature/fase1-usuarios` enviada ao GitHub e juntada na `main`. |
