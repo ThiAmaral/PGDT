@@ -1,0 +1,6 @@
+# Windows / OneDrive
+Thumbs.db
+desktop.ini
+
+# Ferramentas locais
+.claude/settings.local.json
