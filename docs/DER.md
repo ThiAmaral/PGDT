@@ -302,9 +302,9 @@ Regra: membros ativos (`removido_em` nulo) ≤ `subprojetos.vagas`.
 | `projetos_base.publico` | Controla o que aparece na página pública (RF14) |
 | `historicos.dados` (json) | Guarda valor anterior e novo, inclusive das mudanças de carga horária |
 
-## 4. Pontos para o autor confirmar
+## 4. Pontos confirmados pelo autor (2026-10-18)
 
-1. **Escola/instituição no cadastro do demandante:** proposta: o demandante escolhe a escola em uma lista; se não encontrar, digita uma nova, que o admin confere junto com a aprovação do cadastro.
-2. **Membro removido no relatório (RF15):** proposta: quem foi removido da equipe **não** aparece no relatório daquele sub-projeto.
-3. **Papéis da equipe:** proposta: começar com Membro Desenvolvedor, Responsável Técnico e Apoio de Campo; o admin cadastra outros.
-4. **Página pública (RF14):** proposta: todo Projeto Base ativo aparece por padrão; o coordenador pode ocultá-lo desmarcando `publico`.
+1. **Escola/instituição no cadastro do demandante:** o demandante escolhe a escola em uma lista; se não encontrar, digita uma nova, que o admin confere junto com a aprovação do cadastro.
+2. **Membro removido no relatório (RF15):** quem foi removido da equipe **não** aparece no relatório daquele sub-projeto.
+3. **Papéis da equipe:** começar com Membro Desenvolvedor, Responsável Técnico e Apoio de Campo; o admin cadastra outros.
+4. **Página pública (RF14):** todo Projeto Base ativo aparece por padrão; o coordenador pode ocultá-lo desmarcando `publico`.

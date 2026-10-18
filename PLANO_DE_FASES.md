@@ -19,7 +19,7 @@ Base: TCC1 de Paulo Henrique Bressanini Rizzi e o documento "Funcionalidades do 
 
 | Fase | Nome | RFs | Status |
 |---|---|---|---|
-| 0 | Decisões e preparação do ambiente | — | 🟨 |
+| 0 | Decisões e preparação do ambiente | — | ✅ |
 | 1 | Fundação, autenticação e usuários | RF01, RF02, RF03, RF04 | ⬜ |
 | 2 | Cadastros de apoio e Projetos Base | RF05 | ⬜ |
 | 3 | Demandas: abertura e triagem | RF06, RF07 | ⬜ |
@@ -33,7 +33,7 @@ Cada fase termina com algo **utilizável e demonstrável**. Uma fase só começa
 
 ---
 
-## Fase 0 — Decisões e preparação do ambiente 🟨
+## Fase 0 — Decisões e preparação do ambiente ✅
 
 **Objetivo:** fechar as lacunas dos requisitos que afetam o modelo de dados e deixar o ambiente pronto.
 
@@ -99,7 +99,7 @@ Para ligar o banco: abrir o **XAMPP Control Panel** (`C:\xampp\xampp-control.exe
   - ⚠️ O OneDrive marca as pastas como "somente leitura" e o PHP recusa gravar nelas. O atributo foi removido de `bootstrap/cache` e `storage/`; se o erro "directory must be present and writable" voltar, repetir esse passo.
   - ℹ️ `php artisan db:show` falha no MariaDB 10.4 do XAMPP (falta `performance_schema`). É só o comando de diagnóstico; o sistema funciona.
 - [x] Escolher o kit de autenticação e o Bootstrap: `laravel/ui` com o preset Bootstrap.
-- [x] Revisar o DER completo com as entidades que faltam: [`docs/DER.md`](docs/DER.md) (diagrama Mermaid + dicionário de dados). *4 pontos aguardam confirmação do autor (seção 4 do DER).*
+- [x] Revisar o DER completo com as entidades que faltam: [`docs/DER.md`](docs/DER.md) (diagrama Mermaid + dicionário de dados). Os 4 pontos da seção 4 foram aprovados pelo autor.
 
 **Critério de conclusão:** decisões registradas neste documento; `php artisan serve` abre a página inicial conectada ao MySQL; repositório com o primeiro commit.
 
@@ -290,6 +290,7 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-18 | A demanda vinculada a um projeto de extensão vira um **sub-projeto** (tabela `subprojetos`). A carga horária estimada é uma por sub-projeto, preenchida pelo Admin ou pelo coordenador e editável em qualquer status, com registro no histórico. | Pedido do autor; o registro no histórico garante rastreabilidade das correções. |
 | 2026-10-18 | Ciclo de status da demanda sem mudanças automáticas: todos os status são alterados manualmente (coordenador/admin; `Cancelada` também pelo demandante antes de `Em Desenvolvimento`). A tela só sugere o próximo status. | Pedido do autor. |
 | 2026-10-18 | Campos específicos de cada perfil ficam em tabelas 1:1 (`estudantes`, `demandantes`, `coordenadores`), e não em `usuarios`. | O plano tinha duas versões; tabelas por perfil evitam colunas vazias e separam as regras de cada cadastro. |
+| 2026-10-18 | DER aprovado: o demandante escolhe a escola da lista ou digita uma nova (conferida pelo admin na aprovação); membro removido não aparece no RF15; papéis iniciais Membro Desenvolvedor, Responsável Técnico e Apoio de Campo; todo Projeto Base ativo é público por padrão, e o coordenador pode ocultar. | Pedido do autor. |
 
 ## Registro de progresso
 
@@ -302,3 +303,4 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-18 | 0 | As 9 propostas restantes foram aprovadas. Projeto Laravel 13 criado em `sistema/` com MySQL, pt_BR e `laravel/ui` + Bootstrap; página inicial funcionando em `php artisan serve`; repositório Git local iniciado com o primeiro commit. |
 | 2026-10-18 | 0 | Repositório no GitHub configurado (`origin` = github.com/ThiAmaral/PGDT) e branch `main` enviada; fluxo `main` + `feature/*` definido. |
 | 2026-10-18 | 0 | DER completo revisado em `docs/DER.md` (23 tabelas no diagrama + `parametros`); plano ajustado: tabelas por perfil, `papeis_equipe`, `entrega_arquivos`. Diagrama Mermaid validado. Fase 0 aguarda a confirmação de 4 pontos do DER. |
+| 2026-10-18 | 0 | Autor aprovou os 4 pontos do DER. **Fase 0 concluída**: decisões registradas, ambiente pronto, `php artisan serve` conectado ao MySQL e repositório no GitHub atualizado. |
