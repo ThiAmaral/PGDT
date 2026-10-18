@@ -2,27 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Perfil;
+use App\Enums\StatusUsuario;
+use App\Models\Usuario;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class HomeController extends Controller
 {
     /**
-     * Create a new controller instance.
-     *
-     * @return void
+     * Painel inicial; o conteúdo muda conforme o perfil da conta.
      */
-    public function __construct()
+    public function index(Request $request): View
     {
-        $this->middleware('auth');
-    }
+        $usuario = $request->user();
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
-    public function index()
-    {
-        return view('home');
+        return view('home', [
+            'usuario' => $usuario,
+            'totalPendentes' => $usuario->temPerfil(Perfil::Admin)
+                ? Usuario::where('status', StatusUsuario::Pendente)->whereNotNull('email_verified_at')->count()
+                : 0,
+        ]);
     }
 }

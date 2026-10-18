@@ -14,9 +14,7 @@
                     <a href="{{ route('home') }}" class="btn btn-primary btn-lg">Ir para o painel</a>
                 @else
                     <a href="{{ route('login') }}" class="btn btn-primary btn-lg">Entrar</a>
-                    @if (Route::has('register'))
-                        <a href="{{ route('register') }}" class="btn btn-outline-primary btn-lg">Criar conta</a>
-                    @endif
+                    <a href="{{ route('register') }}" class="btn btn-outline-primary btn-lg">Criar conta</a>
                 @endauth
             </div>
         </div>
