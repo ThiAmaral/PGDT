@@ -84,6 +84,8 @@ O autor aprovou todas as propostas abaixo; o ciclo de status foi ajustado para m
 | Git | ✅ 2.49.0, já configurado com nome e e-mail |
 | GitHub CLI (`gh`) | ➖ não instalado (opcional; o repositório pode ser criado pelo site) |
 
+Instalação em uma máquina nova: [`docs/INSTALACAO.md`](docs/INSTALACAO.md).
+
 Para ligar o banco: abrir o **XAMPP Control Panel** (`C:\xampp\xampp-control.exe`) e clicar em **Start** no MySQL.
 
 ### Tarefas
@@ -319,3 +321,4 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-18 | 1 | Fase 1 iniciada na branch `feature/fase1-usuarios`. Traduções pt-BR do Laravel instaladas (`lucascudo/laravel-pt-br-localization`). |
 | 2026-10-18 | 1 | Entregáveis da Fase 1 implementados: tabelas por perfil, cadastros separados, convite de coordenador, login com bloqueio por status, recuperação de senha, painel do admin (filtros, aprovação, status, troca de perfil) e menu por perfil. 34 testes passando e fluxo conferido no navegador. Aguarda validação do autor para juntar na `main`. |
 | 2026-10-18 | 1 | Autor aprovou a Fase 1. **Fase 1 concluída**: branch `feature/fase1-usuarios` enviada ao GitHub e juntada na `main`. |
+| 2026-10-18 | — | Passo a passo de instalação em máquina nova salvo em `docs/INSTALACAO.md`. |
