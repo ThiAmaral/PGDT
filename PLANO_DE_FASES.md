@@ -88,7 +88,9 @@ Para ligar o banco: abrir o **XAMPP Control Panel** (`C:\xampp\xampp-control.exe
 
 ### Tarefas
 - [x] Instalar PHP 8.2+, Composer, Node.js, XAMPP (Apache + MySQL) e Git.
-- [ ] Criar o repositório no GitHub e definir o fluxo de branches (ex.: `main` + `feature/*`). *(repositório Git local criado na pasta `PGDT/`, branch `main`, primeiro commit feito; falta criar o remoto no GitHub e enviar)*
+- [x] Criar o repositório no GitHub e definir o fluxo de branches.
+  - Repositório: https://github.com/ThiAmaral/PGDT (remoto `origin`), com a raiz na pasta `PGDT/`.
+  - Fluxo: `main` sempre funcionando; cada entrega em uma branch `feature/<fase>-<assunto>` (ex.: `feature/fase1-cadastros`), juntada na `main` quando o critério da etapa for atingido.
 - [x] Criar o projeto Laravel e configurar `.env` e o banco local.
   - Laravel 13.37 em `PGDT/sistema/`; o plano fica na raiz do repositório.
   - `.env`: `APP_NAME=PGDT`, `APP_LOCALE=pt_BR`, MySQL `pgdt` (root, sem senha); fuso `America/Sao_Paulo` em `config/app.php`.
@@ -295,3 +297,4 @@ Itens do TCC que não estão no documento de RF, mas que agregam valor.
 | 2026-10-18 | 0 | Ambiente pronto: extensões do PHP 8.3 ativadas, Composer 2.10.3 e XAMPP 8.2.12 (MariaDB 10.4.32) instalados, banco `pgdt` criado e conexão testada. |
 | 2026-10-18 | 0 | Ciclo de status ajustado: todas as mudanças passam a ser manuais (RF09 e RF13 atualizados). |
 | 2026-10-18 | 0 | As 9 propostas restantes foram aprovadas. Projeto Laravel 13 criado em `sistema/` com MySQL, pt_BR e `laravel/ui` + Bootstrap; página inicial funcionando em `php artisan serve`; repositório Git local iniciado com o primeiro commit. |
+| 2026-10-18 | 0 | Repositório no GitHub configurado (`origin` = github.com/ThiAmaral/PGDT) e branch `main` enviada; fluxo `main` + `feature/*` definido. |
