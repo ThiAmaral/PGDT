@@ -47,6 +47,9 @@
                                             <a class="nav-link @if (request()->routeIs('demandas.*')) active @endif" href="{{ route('demandas.index') }}">Demandas</a>
                                         </li>
                                         <li class="nav-item">
+                                            <a class="nav-link @if (request()->routeIs('subprojetos.*')) active @endif" href="{{ route('subprojetos.index') }}">Sub-projetos</a>
+                                        </li>
+                                        <li class="nav-item">
                                             <a class="nav-link @if (request()->routeIs('projetos-base.*')) active @endif" href="{{ route('projetos-base.index') }}">Projetos Base</a>
                                         </li>
                                         <li class="nav-item">
@@ -56,6 +59,9 @@
                                     @case(\App\Enums\Perfil::Coordenador)
                                         <li class="nav-item">
                                             <a class="nav-link @if (request()->routeIs('demandas.*')) active @endif" href="{{ route('demandas.index') }}">Demandas</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link @if (request()->routeIs('subprojetos.*')) active @endif" href="{{ route('subprojetos.index') }}">Sub-projetos</a>
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link @if (request()->routeIs('projetos-base.*')) active @endif" href="{{ route('projetos-base.index') }}">Projetos Base</a>
@@ -71,10 +77,20 @@
                                         @break
                                     @default
                                         <li class="nav-item">
+                                            <a class="nav-link @if (request()->routeIs('oportunidades.*')) active @endif" href="{{ route('oportunidades.index') }}">Oportunidades</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link @if (request()->routeIs('subprojetos.*')) active @endif" href="{{ route('subprojetos.index') }}">Meus sub-projetos</a>
+                                        </li>
+                                        <li class="nav-item">
                                             <a class="nav-link @if (request()->routeIs('projetos-base.*')) active @endif" href="{{ route('projetos-base.index') }}">Projetos de extensão</a>
                                         </li>
                                 @endswitch
                             @endif
+                        @else
+                            <li class="nav-item">
+                                <a class="nav-link @if (request()->routeIs('publico.*')) active @endif" href="{{ route('publico.index') }}">Projetos e vagas</a>
+                            </li>
                         @endauth
                     </ul>
 

@@ -7,6 +7,7 @@ use App\Enums\StatusDemanda;
 use App\Enums\StatusUsuario;
 use App\Models\ProjetoBase;
 use App\Models\Solicitacao;
+use App\Models\Subprojeto;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -32,6 +33,17 @@ class HomeController extends Controller
             'totalDemandasNovas' => $usuario->temPerfil(Perfil::Admin, Perfil::Coordenador)
                 ? Solicitacao::query()->visiveisPara($usuario)->where('status', StatusDemanda::Cadastrada)->count()
                 : 0,
+            // RF11: candidaturas aguardando avaliação nos sub-projetos que o usuário gerencia.
+            'totalCandidaturasPendentes' => $usuario->temPerfil(Perfil::Admin, Perfil::Coordenador)
+                ? Subprojeto::candidaturasPendentesPara($usuario)
+                : 0,
+            // RF10: vagas abertas e equipes do estudante.
+            'totalOportunidades' => $usuario->temPerfil(Perfil::Estudante)
+                ? Subprojeto::query()->comVagasAbertas()->count()
+                : 0,
+            'minhasEquipes' => $usuario->temPerfil(Perfil::Estudante)
+                ? Subprojeto::query()->with('solicitacao')->visiveisPara($usuario)->latest()->limit(5)->get()
+                : collect(),
             'minhasDemandas' => $usuario->temPerfil(Perfil::Demandante)
                 ? Solicitacao::query()->visiveisPara($usuario)->latest()->orderByDesc('id')->limit(5)->get()
                 : collect(),

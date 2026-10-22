@@ -5,14 +5,23 @@ use App\Http\Controllers\Admin\DominioController;
 use App\Http\Controllers\Admin\UsuarioController;
 use App\Http\Controllers\Cadastro\CadastroController;
 use App\Http\Controllers\Cadastro\ConviteController;
+use App\Http\Controllers\CandidaturaController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MembroEquipeController;
 use App\Http\Controllers\MensagemController;
+use App\Http\Controllers\OportunidadeController;
 use App\Http\Controllers\ProjetoBaseController;
+use App\Http\Controllers\ProjetoPublicoController;
 use App\Http\Controllers\SolicitacaoController;
+use App\Http\Controllers\SubprojetoController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('inicio');
+
+// RF14: consulta pública dos projetos de extensão, sem login.
+Route::get('/projetos', [ProjetoPublicoController::class, 'index'])->name('publico.index');
+Route::get('/projetos/{projetoBase}', [ProjetoPublicoController::class, 'show'])->whereNumber('projetoBase')->name('publico.show');
 
 // RF03: login único, logout, recuperação de senha e confirmação de e-mail.
 Auth::routes(['register' => false, 'verify' => true]);
@@ -77,4 +86,25 @@ Route::middleware(['auth', 'verified', 'ativo'])->group(function () {
     Route::post('/demandas/{solicitacao}/mensagens', [MensagemController::class, 'store'])
         ->middleware('throttle:20,1')
         ->name('demandas.mensagens.store');
+
+    // RF09: sub-projetos. As permissões ficam na SubprojetoPolicy.
+    Route::get('/demandas/{solicitacao}/subprojeto/criar', [SubprojetoController::class, 'create'])->name('subprojetos.create');
+    Route::post('/demandas/{solicitacao}/subprojeto', [SubprojetoController::class, 'store'])->name('subprojetos.store');
+    Route::resource('subprojetos', SubprojetoController::class)->only(['index', 'show', 'edit', 'update']);
+
+    // RF10: vitrine de oportunidades e candidatura.
+    Route::get('/oportunidades', [OportunidadeController::class, 'index'])->name('oportunidades.index');
+    Route::get('/oportunidades/{subprojeto}', [OportunidadeController::class, 'show'])->name('oportunidades.show');
+    Route::post('/oportunidades/{subprojeto}/candidatura', [CandidaturaController::class, 'store'])
+        ->middleware('throttle:10,1')
+        ->name('candidaturas.store');
+
+    // RF11: avaliação das candidaturas e gestão da equipe.
+    Route::scopeBindings()->prefix('/subprojetos/{subprojeto}')->name('subprojetos.')->group(function () {
+        Route::patch('/candidaturas/{candidatura}/cancelar', [CandidaturaController::class, 'cancelar'])->name('candidaturas.cancelar');
+        Route::patch('/candidaturas/{candidatura}/aprovar', [CandidaturaController::class, 'aprovar'])->name('candidaturas.aprovar');
+        Route::patch('/candidaturas/{candidatura}/recusar', [CandidaturaController::class, 'recusar'])->name('candidaturas.recusar');
+        Route::patch('/membros/{membro}/papel', [MembroEquipeController::class, 'alterarPapel'])->name('membros.papel');
+        Route::patch('/membros/{membro}/remover', [MembroEquipeController::class, 'remover'])->name('membros.remover');
+    });
 });

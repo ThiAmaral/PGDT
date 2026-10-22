@@ -22,7 +22,7 @@
                 @csrf
                 <input type="hidden" name="novo" value="1">
                 <div class="{{ $config['ordem'] ? 'col-md-6' : 'col-md-9' }}">
-                    <label for="nome" class="form-label">Nova {{ $config['singular'] }}</label>
+                    <label for="nome" class="form-label">{{ $config['feminino'] ? 'Nova' : 'Novo' }} {{ $config['singular'] }}</label>
                     <input id="nome" type="text" name="nome" class="form-control @error('nome') is-invalid @enderror" value="{{ old('novo') ? old('nome') : '' }}" required maxlength="100">
                     @error('nome')
                         <div class="invalid-feedback">{{ $message }}</div>

@@ -31,6 +31,15 @@
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 shadow-sm">
                         <div class="card-body">
+                            <h2 class="h5">Candidaturas pendentes</h2>
+                            <p class="display-6 mb-2">{{ $totalCandidaturasPendentes }}</p>
+                            <a href="{{ route('subprojetos.index') }}" class="btn btn-primary btn-sm">Abrir sub-projetos</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
                             <h2 class="h5">Usuários</h2>
                             <p class="text-muted">Aprovar, alterar status e trocar o perfil dos usuários.</p>
                             <a href="{{ route('admin.usuarios.index') }}" class="btn btn-outline-primary btn-sm">Abrir usuários</a>
@@ -82,6 +91,16 @@
                 <div class="col-md-6">
                     <div class="card h-100 shadow-sm">
                         <div class="card-body">
+                            <h2 class="h5">Candidaturas pendentes</h2>
+                            <p class="display-6 mb-2">{{ $totalCandidaturasPendentes }}</p>
+                            <p class="text-muted">Estudantes que querem entrar nas equipes dos seus sub-projetos.</p>
+                            <a href="{{ route('subprojetos.index') }}" class="btn btn-primary btn-sm">Abrir sub-projetos</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
                             <h2 class="h5">Seus projetos de extensão</h2>
                             <p class="display-6 mb-2">{{ $totalMeusProjetos }}</p>
                             <p class="text-muted">Projetos Base que recebem as demandas das escolas.</p>
@@ -121,10 +140,32 @@
             @break
 
         @case(\App\Enums\Perfil::Estudante)
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h2 class="h5">Oportunidades</h2>
-                    <p class="text-muted mb-0">Em breve você poderá ver os sub-projetos com vagas abertas e se candidatar.</p>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h2 class="h5">Oportunidades</h2>
+                            <p class="display-6 mb-2">{{ $totalOportunidades }}</p>
+                            <p class="text-muted">Sub-projetos com vagas abertas para estudantes extensionistas.</p>
+                            <a href="{{ route('oportunidades.index') }}" class="btn btn-primary btn-sm">Ver oportunidades</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h2 class="h5">Minhas equipes</h2>
+                            @forelse ($minhasEquipes as $subprojeto)
+                                <a href="{{ route('subprojetos.show', $subprojeto) }}" class="d-flex justify-content-between align-items-center gap-2 border-top py-2 text-body text-decoration-none">
+                                    <span class="text-break">{{ $subprojeto->titulo }}</span>
+                                    <span class="badge text-bg-{{ $subprojeto->solicitacao->status->cor() }}">{{ $subprojeto->solicitacao->status->rotulo() }}</span>
+                                </a>
+                            @empty
+                                <p class="text-muted">Você ainda não faz parte de nenhuma equipe. Candidate-se a um sub-projeto em "Oportunidades".</p>
+                            @endforelse
+                            <a href="{{ route('subprojetos.index') }}" class="btn btn-outline-primary btn-sm mt-2">Meus sub-projetos e candidaturas</a>
+                        </div>
+                    </div>
                 </div>
             </div>
             @break

@@ -24,7 +24,7 @@ Base: TCC1 de Paulo Henrique Bressanini Rizzi e o documento "Funcionalidades do 
 | 2 | Cadastros de apoio e Projetos Base | RF05 | ✅ |
 | 3 | Demandas: abertura e triagem | RF06, RF07 | ✅ |
 | 4 | Rastreabilidade e comunicação | RF08 | ✅ |
-| 5 | Sub-projetos, vitrine pública e equipe | RF09, RF10, RF11, RF14 | ⬜ |
+| 5 | Sub-projetos, vitrine pública e equipe | RF09, RF10, RF11, RF14 | 🟨 |
 | 6 | Entregas, validação e relatório | RF12, RF13, RF15 | ⬜ |
 | 7 | Complementos (dashboard, notificações, auditoria) | antigos RF04/RF22/RF23 do TCC | ⬜ |
 | 8 | Testes, validação com usuários e implantação | RNF01–RNF05 | ⬜ |
@@ -248,21 +248,44 @@ Regras para evitar erro do usuário:
 
 ---
 
-## Fase 5 — Sub-projetos, vitrine pública e equipe ⬜
+## Fase 5 — Sub-projetos, vitrine pública e equipe 🟨
 
 **RFs:** RF09 Criação de Sub-projetos · RF10 Vitrine de Oportunidades · RF11 Gestão de Lotação · RF14 Consulta Pública de Projetos
 
 ### Entregáveis
-- [ ] Tabelas `subprojetos` (1:1 com a solicitação; o Projeto Base vem dela; data de início, data de fim e carga horária estimada), `candidaturas`, `papeis_equipe`, `membros_equipe` (com papel e `removido_em`).
-- [ ] RF09: converter a demanda em sub-projeto do projeto de extensão (campos pré-preenchidos, escopo obrigatório, data de início e de fim, carga horária estimada, vagas, modalidade); o coordenador logado vira o responsável; ao salvar, a tela sugere mudar a demanda para `Em Desenvolvimento` (mudança manual).
+- [x] Tabelas `subprojetos` (1:1 com a solicitação; o Projeto Base vem dela; data de início, data de fim e carga horária estimada), `candidaturas`, `papeis_equipe`, `membros_equipe` (com papel e `removido_em`).
+- [x] RF09: converter a demanda em sub-projeto do projeto de extensão (campos pré-preenchidos, escopo obrigatório, data de início e de fim, carga horária estimada, vagas, modalidade); o coordenador logado vira o responsável; ao salvar, a tela sugere mudar a demanda para `Em Desenvolvimento` (mudança manual).
   - A carga horária estimada é preenchida pelo Admin ou pelo Coordenador projeto de extensão e pode ser alterada em qualquer status, inclusive depois de `Concluída`.
   - Cada alteração da carga horária fica registrada no histórico (RF08): valor anterior, valor novo, quem alterou e quando.
-- [ ] RF10: vitrine em cards com busca, filtro por modalidade e candidatura com um clique.
-- [ ] RF11: tabela de candidaturas pendentes (Aprovar/Recusar), equipe com papéis (Membro Desenvolvedor, Responsável Técnico, funções de campo) e remoção de membros.
-- [ ] RF14: página pública (`/projetos`), sem login, com os projetos de extensão cadastrados e os sub-projetos com vagas abertas (busca e filtros iguais aos da vitrine).
+- [x] RF10: vitrine em cards com busca, filtro por modalidade e candidatura com um clique.
+- [x] RF11: tabela de candidaturas pendentes (Aprovar/Recusar), equipe com papéis (Membro Desenvolvedor, Responsável Técnico, funções de campo) e remoção de membros.
+- [x] RF14: página pública (`/projetos`), sem login, com os projetos de extensão cadastrados e os sub-projetos com vagas abertas (busca e filtros iguais aos da vitrine).
   - Mostra só dados públicos: título, descrição, coordenador, modalidade, período e vagas. Contatos do demandante, anexos e chat ficam fora (LGPD).
   - O botão "Quero participar" leva ao login. Depois do login, a pessoa volta para o mesmo projeto e conclui a inscrição com um clique. A tela de login tem o link "Ainda não tem conta? Criar conta".
   - Só o perfil Estudante com status `Ativo` pode se inscrever; para os outros o botão aparece desabilitado com a explicação.
+
+### Como foi implementado (2026-10-21)
+- **Código:** branch `feature/fase5-subprojetos`. Migration `2026_10_21_000004_create_subprojetos_tables` (cria também os 3 papéis iniciais); enums `Modalidade` e `StatusCandidatura`; models `Subprojeto`, `Candidatura`, `PapelEquipe` e `MembroEquipe`; observers `SubprojetoObserver` e `MembroEquipeObserver`; `SubprojetoPolicy`; controllers `SubprojetoController`, `CandidaturaController`, `MembroEquipeController`, `OportunidadeController` e `ProjetoPublicoController`.
+- **RF09:** na demanda "Priorizada", o card "Sub-projeto" leva ao formulário (`/demandas/{id}/subprojeto/criar`) com título e escopo vindos da demanda. Depois de salvar, a tela da demanda sugere "Em Desenvolvimento" (já vem escolhido na caixa de status). A tela do sub-projeto (`/subprojetos/{id}`) mostra candidaturas pendentes, equipe e dados; "Editar" altera os dados e a opção "Receber candidaturas".
+- **Carga horária:** cada alteração grava "Carga horária estimada alterada de X h para Y h" na linha do tempo, com `{"de": X, "para": Y}`, quem e quando. Com a demanda encerrada, a tela de edição mostra só esse campo.
+- **RF10:** menu "Oportunidades" do estudante (`/oportunidades`): cards com busca (título ou escopo), filtro por modalidade e por projeto. O card leva à página do sub-projeto, onde "Confirmar candidatura" envia com um clique. "Meus sub-projetos" mostra as equipes e as candidaturas com a situação.
+- **RF11:** aprovar (escolhendo o papel), recusar, trocar papel e remover membro, com confirmação. A aprovação trava o sub-projeto no banco para duas aprovações simultâneas não passarem das vagas. O admin cadastra novos papéis em "Cadastros de apoio" → "Papéis da equipe".
+- **RF14:** `/projetos` e `/projetos/{id}` sem login, com o link "Projetos e vagas" no menu dos visitantes e na página inicial. "Quero participar" leva ao login (com o aviso "Entre com a sua conta de estudante para concluir a inscrição") e, depois do login, de volta ao sub-projeto. Quem não pode se inscrever vê o botão desabilitado com o motivo.
+- **Painel:** admin e coordenador veem o total de candidaturas pendentes; o estudante vê as vagas abertas e as suas equipes. Menu "Sub-projetos" para admin e coordenador.
+- **Testes:** 34 testes novos (`SubprojetoTest`, `EquipeTest`, `ConsultaPublicaTest`), incluindo o critério de conclusão de ponta a ponta; 127 no total, todos passando.
+- **Teste no navegador:** como admin, criei o sub-projeto da demanda de teste (presencial, 2 vagas, 40 h). Como visitante, cliquei em "Quero participar", criei a estudante de teste pelo cadastro, confirmei o e-mail (link no `laravel.log`) e, ainda pendente, vi o botão desabilitado com o motivo. Depois da aprovação pelo admin, entrei, voltei ao sub-projeto e me candidatei com um clique. Como admin, aprovei como Responsável Técnico, corrigi a carga horária para 48 h e conferi as duas ações na linha do tempo. Conferido também no celular. A conta de teste da estudante está anotada no `.env` local.
+- **Ajuste durante o teste:** quando o admin cria o sub-projeto, o responsável passa a ser o coordenador do projeto (a página pública mostraria "Administrador" como coordenação).
+
+### Decisões de implementação (aguardam aprovação do autor)
+- (a) O sub-projeto só é criado com a demanda "Priorizada", uma vez por demanda. Criar não muda o status; "Em Desenvolvimento" só aparece na lista depois que o sub-projeto existe.
+- (b) Responsável: o coordenador que cria. Se quem cria é o admin, fica o coordenador do Projeto Base (ou o admin, se o projeto não tiver coordenador). O responsável também gerencia a demanda e a equipe, mesmo que o admin troque depois o coordenador do Projeto Base.
+- (c) Com a demanda "Concluída", "Cancelada" ou "Recusada", o sub-projeto sai da vitrine e os dados e a equipe não mudam mais; só a carga horária pode ser corrigida.
+- (d) O sub-projeto aparece na vitrine enquanto "Receber candidaturas" estiver marcado, houver vagas livres, a demanda estiver em andamento e o Projeto Base estiver ativo. Com a equipe completa, sai da vitrine sozinho e volta se alguém sair. As vagas não podem ficar abaixo do número de membros.
+- (e) O estudante pode cancelar a candidatura enquanto ela não foi avaliada e se candidatar de novo depois. Quem foi recusado ou removido não se candidata de novo ao mesmo sub-projeto.
+- (f) Na aprovação, o papel sugerido é "Membro Desenvolvedor". Entrada, troca de papel e remoção de membros vão para a linha do tempo da demanda; as candidaturas não (ficam na tela do sub-projeto).
+- (g) O estudante da equipe vê a demanda (descrição, anexos, linha do tempo e chat) e conversa no chat, mas não vê o e-mail e o telefone do demandante. Removido da equipe, perde o acesso.
+- (h) A página pública mostra título, escopo, projeto, coordenador, modalidade, período e vagas. A carga horária aparece só na vitrine, para quem está logado. Projetos ocultos (`publico` desmarcado) e os seus sub-projetos ficam fora.
+- (i) O escopo vem preenchido com a descrição da demanda e o formulário avisa que ele vai para a página pública, para não incluir dados pessoais.
 
 **Critério de conclusão:** um visitante sem login vê os projetos, clica em "Quero participar", faz login, se candidata, é aprovado e aparece na equipe com um papel.
 
@@ -379,3 +402,4 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-21 | 3 | Autor aprovou a Fase 3 e as decisões de implementação (a)–(g). **Fase 3 concluída**: branch `feature/fase3-demandas` juntada na `main` e enviada ao GitHub. |
 | 2026-10-21 | 4 | Fase 4 iniciada na branch `feature/fase4-rastreabilidade`. Entregáveis implementados: tabelas `historicos` e `mensagens`, registro automático pelo Observer, barra de progresso, linha do tempo e chat com acesso restrito. 93 testes passando; migration rodada no MySQL local; fluxo conferido no navegador (computador e celular). Aguarda validação do autor e das decisões (a)–(e) para juntar na `main`. |
 | 2026-10-21 | 4 | Autor aprovou a Fase 4 e as decisões de implementação (a)–(e). **Fase 4 concluída**: branch `feature/fase4-rastreabilidade` juntada na `main` e enviada ao GitHub. |
+| 2026-10-21 | 5 | Fase 5 iniciada na branch `feature/fase5-subprojetos`. Entregáveis implementados: sub-projetos com carga horária no histórico, vitrine de oportunidades, candidaturas, equipe com papéis e página pública `/projetos`. 127 testes passando; migration rodada no MySQL local; critério de conclusão conferido no navegador (computador e celular). Aguarda validação do autor e das decisões (a)–(i) para juntar na `main`. |

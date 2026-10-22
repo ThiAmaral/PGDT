@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Projeto de extensão (RF05). As demandas são abertas dentro de um Projeto Base.
@@ -46,6 +47,24 @@ class ProjetoBase extends Model
     public function coordenador(): BelongsTo
     {
         return $this->belongsTo(Usuario::class, 'coordenador_id');
+    }
+
+    /**
+     * @return HasMany<Solicitacao, $this>
+     */
+    public function solicitacoes(): HasMany
+    {
+        return $this->hasMany(Solicitacao::class);
+    }
+
+    /**
+     * Projetos que aparecem na página pública (RF14): ativos e não ocultados pelo coordenador.
+     *
+     * @param  Builder<ProjetoBase>  $query
+     */
+    public function scopeVisiveisAoPublico(Builder $query): void
+    {
+        $query->where('ativo', true)->where('publico', true);
     }
 
     /**
