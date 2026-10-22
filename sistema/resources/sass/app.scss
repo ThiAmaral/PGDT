@@ -17,3 +17,15 @@
         box-shadow: $box-shadow !important;
     }
 }
+
+// Upload com arrastar e soltar (nova demanda)
+.zona-upload {
+    border-style: dashed !important;
+    background-color: $white;
+    transition: background-color .15s ease, border-color .15s ease;
+
+    &.arrastando {
+        border-color: $primary !important;
+        background-color: tint-color($primary, 90%);
+    }
+}

@@ -22,7 +22,7 @@ Base: TCC1 de Paulo Henrique Bressanini Rizzi e o documento "Funcionalidades do 
 | 0 | Decisões e preparação do ambiente | — | ✅ |
 | 1 | Fundação, autenticação e usuários | RF01, RF02, RF03, RF04 | ✅ |
 | 2 | Cadastros de apoio e Projetos Base | RF05 | ✅ |
-| 3 | Demandas: abertura e triagem | RF06, RF07 | ⬜ |
+| 3 | Demandas: abertura e triagem | RF06, RF07 | 🟨 |
 | 4 | Rastreabilidade e comunicação | RF08 | ⬜ |
 | 5 | Sub-projetos, vitrine pública e equipe | RF09, RF10, RF11, RF14 | ⬜ |
 | 6 | Entregas, validação e relatório | RF12, RF13, RF15 | ⬜ |
@@ -185,17 +185,30 @@ Regras para evitar erro do usuário:
 
 ---
 
-## Fase 3 — Demandas: abertura e triagem ⬜
+## Fase 3 — Demandas: abertura e triagem 🟨
 
 **RFs:** RF06 Abertura de Solicitações · RF07 Triagem e Parametrização
 
 ### Entregáveis
-- [ ] Tabelas `solicitacoes` e `anexos` (um para muitos).
-- [ ] RF06: formulário do Demandante com seleção do Projeto Base, título (máx. 100 caracteres), descrição, justificativa, público afetado e upload drag-and-drop (PDF/JPG/PNG, até 5 MB).
-- [ ] Armazenamento seguro dos arquivos (`storage`, fora do diretório público, com download autorizado).
-- [ ] "Minhas demandas" para o Demandante.
-- [ ] RF07: fila do coordenador (status `Cadastrada`), tela de detalhes, definição de categoria, prioridade e complexidade.
-- [ ] Transições de status iniciais: Cadastrada → Em Análise → Priorizada (e Recusada, se decidido na Fase 0).
+- [x] Tabelas `solicitacoes` e `anexos` (um para muitos).
+- [x] RF06: formulário do Demandante com seleção do Projeto Base, título (máx. 100 caracteres), descrição, justificativa, público afetado e upload drag-and-drop (PDF/JPG/PNG, até 5 MB).
+- [x] Armazenamento seguro dos arquivos (`storage`, fora do diretório público, com download autorizado).
+- [x] "Minhas demandas" para o Demandante.
+- [x] RF07: fila do coordenador (status `Cadastrada`), tela de detalhes, definição de categoria, prioridade e complexidade.
+- [x] Transições de status iniciais: Cadastrada → Em Análise → Priorizada (e Recusada, se decidido na Fase 0).
+
+### Como foi implementado (2026-10-21)
+- **Código:** branch `feature/fase3-demandas`. Migration `2026_10_21_000002_create_solicitacoes_tables`; enums `StatusDemanda` e `Complexidade`; models `Solicitacao` e `Anexo`; `SolicitacaoPolicy`; `SolicitacaoController`.
+- **Rotas:** `/demandas` (lista: "Minhas demandas" para o demandante, fila para coordenador e admin), `/demandas/create`, `/demandas/{id}` (detalhes), `PATCH /demandas/{id}/triagem`, `PATCH /demandas/{id}/status` e `/demandas/{id}/anexos/{anexo}` (download).
+- **Abertura (RF06):** o demandante escolhe um Projeto Base ativo (a descrição do projeto aparece ao escolher), com contador no título. A escola é copiada do cadastro do demandante. Anexos são opcionais: até 5 arquivos PDF/JPG/PNG de até 5 MB, conferidos no navegador (tipo, tamanho, quantidade, repetidos) e de novo no servidor; os erros citam o nome do arquivo.
+- **Arquivos:** gravados no disco `local` (`storage/app/private/solicitacoes/{id}`), fora da pasta pública, com nome aleatório. O download passa pela policy (só quem vê a demanda) e devolve o nome original. Se a gravação da demanda falhar, os arquivos já salvos são apagados.
+- **Fila (RF07):** abre nas demandas `Cadastrada`; filtros por título, status, prioridade e projeto. Ordem: prioridade (pela `ordem` do cadastro de apoio; sem prioridade por último) e depois a mais antiga.
+- **Triagem:** categoria, prioridade e complexidade (`Baixa`, `Média`, `Alta`), todas obrigatórias; grava quem classificou e quando. Pode ser revista enquanto a demanda está `Cadastrada`, `Em Análise` ou `Priorizada`. Salvar a triagem não muda o status.
+- **Status (sempre manual):** coordenador e admin: `Cadastrada` → `Em Análise` ou `Recusada`; `Em Análise` → `Priorizada` (só depois da triagem) ou `Recusada`; `Priorizada` → `Em Análise` ou `Recusada`; `Recusada` → `Em Análise` (reabrir). `Recusada` e `Cancelada` exigem motivo, que o demandante vê. O demandante cancela até `Priorizada`; o admin cancela a qualquer momento. A tela sugere o próximo passo ao coordenador.
+- **Painel:** admin e coordenador veem o número de demandas novas; o demandante vê as 5 últimas demandas e o botão "Nova demanda". Menu: "Demandas" (admin e coordenador) e "Minhas demandas" (demandante).
+- **Testes:** 24 testes novos (`SolicitacaoTest`); 77 no total, todos passando.
+- **Teste manual no navegador:** coordenador cadastrou um Projeto Base de teste; demandante de teste criado pelo cadastro e aprovado pelo admin; demanda aberta com dois anexos pelo arrastar-e-soltar (arquivo `.xlsx` e PDF de 6 MB barrados no navegador); download conferido; admin passou a demanda por Em Análise → classificação → Priorizada; demandante viu o status e a classificação no celular. Corrigidos: tamanho do arquivo no formato brasileiro ("1,4 MB") e o cancelamento do demandante passou a ficar recolhido. A triagem no navegador foi feita como admin (a senha do coordenador de teste não está registrada); o fluxo do coordenador está coberto pelos testes.
+- **Conta de teste:** o e-mail e a senha do demandante de teste estão no `sistema/.env` local (`TESTE_DEMANDANTE_*`), que não vai para o GitHub.
 
 **Critério de conclusão:** um demandante abre uma demanda com anexo e um coordenador a classifica e prioriza.
 
@@ -321,6 +334,7 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-18 | Decisões de implementação da Fase 1: (a) a confirmação de e-mail vale só para o estudante, como decidido na Fase 0; (b) senha com no mínimo 8 caracteres, letras e números; (c) escola digitada pelo demandante nasce inativa e é ativada na aprovação; (d) o admin não altera o próprio status ou perfil; (e) na troca de perfil, os dados do perfil anterior ficam guardados; (f) estudante sem e-mail confirmado não pode ser aprovado. | Segurança e coerência com as decisões da Fase 0; aprovadas pelo autor junto com a Fase 1. |
 | 2026-10-18 | Laravel Boost instalado como dependência de desenvolvimento. | Pedido pelo `CLAUDE.md` do projeto Laravel. |
 | 2026-10-21 | Decisões de implementação da Fase 2 (aprovadas pelo autor junto com a fase): (a) o coordenador edita só os projetos que coordena; (b) só o admin troca o coordenador responsável; (c) Projeto Base e itens de domínio não são apagados, só inativados; (d) `projetos_base.coordenador_id` aceita nulo só para o "Demandas Gerais" até o admin definir o coordenador; (e) demandante e estudante consultam a lista de projetos ativos. | Segurança, rastreabilidade e a decisão da Fase 0 sobre "Demandas Gerais". |
+| 2026-10-21 | Decisões de implementação da Fase 3 (aguardam aprovação do autor junto com a fase): (a) o coordenador vê e classifica só as demandas dos projetos que coordena; as do "Demandas Gerais" sem coordenador ficam com o admin; (b) até 5 anexos por demanda, opcionais; (c) o demandante não edita a demanda depois de enviada (ajustes vão pelo chat da Fase 4); (d) "Priorizada" só depois de categoria, prioridade e complexidade definidas; (e) a triagem pode ser revista até "Priorizada"; (f) uma demanda recusada pode ser reaberta para "Em Análise"; (g) o histórico das mudanças de status (tabela `historicos`) entra na Fase 4; até lá fica gravado só o status atual, o motivo e quem fez a triagem. | Segurança e coerência com as decisões da Fase 0. |
 
 ## Registro de progresso
 
@@ -341,3 +355,5 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-21 | 2 | Fase 2 iniciada na branch `feature/fase2-projetos-base`. Entregáveis implementados: tabelas de domínio com seeders, cadastros de apoio do admin, CRUD e listagem de Projetos Base com permissões por perfil. 53 testes passando; migrations e seeders rodados no MySQL local. Falta a conferência no navegador com login e a validação do autor. |
 | 2026-10-21 | 2 | Telas conferidas no navegador como admin; duas correções de formulário feitas. Aguarda validação do autor (incluindo o fluxo do coordenador, que precisa de um coordenador convidado) para juntar na `main`. |
 | 2026-10-21 | 2 | Autor cadastrou um coordenador pelo convite (link lido no `laravel.log`, pois o ambiente local usa `MAIL_MAILER=log`) e aprovou a Fase 2. **Fase 2 concluída**: branch `feature/fase2-projetos-base` juntada na `main`. |
+| 2026-10-21 | 3 | Fase 3 iniciada na branch `feature/fase3-demandas`. |
+| 2026-10-21 | 3 | Entregáveis da Fase 3 implementados: demandas com anexos (upload arrasta-e-solta, arquivos fora da pasta pública), "Minhas demandas", fila de triagem, classificação e status iniciais. 77 testes passando; migration rodada no MySQL local; fluxo conferido no navegador (computador e celular). Aguarda validação do autor para juntar na `main`. |

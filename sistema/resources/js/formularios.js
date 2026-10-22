@@ -1,5 +1,5 @@
 /**
- * Comportamentos dos formulários de cadastro e do painel do admin.
+ * Comportamentos dos formulários de cadastro, do painel do admin e das demandas.
  */
 
 function mascararTelefone(valor) {
@@ -144,6 +144,144 @@ function iniciarTrocaPerfil() {
     });
 }
 
+/** Contador de caracteres: `data-contador="#id-do-contador"` no campo com maxlength. */
+function iniciarContadores() {
+    document.querySelectorAll('[data-contador]').forEach((campo) => {
+        const contador = document.querySelector(campo.dataset.contador);
+        const atualizar = () => {
+            contador.textContent = `${campo.value.length}/${campo.maxLength}`;
+        };
+
+        campo.addEventListener('input', atualizar);
+        atualizar();
+    });
+}
+
+/** Nova demanda: mostra a descrição do projeto de extensão escolhido. */
+function iniciarDescricaoProjeto() {
+    document.querySelectorAll('[data-descricoes-projeto]').forEach((select) => {
+        const destino = document.querySelector(select.dataset.descricoesProjeto);
+        const atualizar = () => {
+            destino.textContent = select.options[select.selectedIndex]?.dataset.descricao ?? '';
+        };
+
+        select.addEventListener('change', atualizar);
+        atualizar();
+    });
+}
+
+/** Evita o envio duplo de formulários com upload, que podem demorar. */
+function iniciarEnvioUnico() {
+    document.querySelectorAll('form[data-enviando]').forEach((formulario) => {
+        formulario.addEventListener('submit', (evento) => {
+            if (evento.defaultPrevented) {
+                return;
+            }
+
+            formulario.querySelectorAll('button[type="submit"]').forEach((botao) => {
+                botao.disabled = true;
+                botao.textContent = formulario.dataset.enviando;
+            });
+        });
+    });
+}
+
+function formatarTamanho(bytes) {
+    if (bytes < 1024 * 1024) {
+        return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+    }
+
+    return `${(bytes / (1024 * 1024)).toFixed(1).replace('.0', '').replace('.', ',')} MB`;
+}
+
+/**
+ * Upload com arrastar e soltar (RF06). Os arquivos ficam no próprio <input type="file">,
+ * então o formulário é enviado normalmente. Confere tipo, tamanho e quantidade antes do envio;
+ * o servidor confere de novo.
+ */
+function iniciarUploads() {
+    document.querySelectorAll('[data-upload]').forEach((zona) => {
+        const input = zona.querySelector('input[type="file"]');
+        const lista = zona.parentElement.querySelector('[data-upload-lista]');
+        const erro = zona.parentElement.querySelector('[data-upload-erro]');
+        const extensoes = zona.dataset.extensoes.split(',');
+        const tamanhoMaximo = Number(zona.dataset.tamanhoMaximo);
+        const quantidadeMaxima = Number(zona.dataset.quantidadeMaxima);
+        let arquivos = [];
+
+        const sincronizar = () => {
+            const transferencia = new DataTransfer();
+            arquivos.forEach((arquivo) => transferencia.items.add(arquivo));
+            input.files = transferencia.files;
+
+            lista.replaceChildren(...arquivos.map((arquivo, indice) => {
+                const item = document.createElement('li');
+                item.className = 'list-group-item d-flex justify-content-between align-items-center gap-2';
+
+                const nome = document.createElement('span');
+                nome.className = 'text-break small';
+                nome.textContent = `${arquivo.name} (${formatarTamanho(arquivo.size)})`;
+
+                const remover = document.createElement('button');
+                remover.type = 'button';
+                remover.className = 'btn btn-sm btn-outline-danger';
+                remover.textContent = 'Remover';
+                remover.setAttribute('aria-label', `Remover ${arquivo.name}`);
+                remover.addEventListener('click', () => {
+                    arquivos.splice(indice, 1);
+                    erro.textContent = '';
+                    sincronizar();
+                });
+
+                item.append(nome, remover);
+                return item;
+            }));
+        };
+
+        const adicionar = (novos) => {
+            const problemas = [];
+
+            Array.from(novos).forEach((arquivo) => {
+                const extensao = arquivo.name.split('.').pop().toLowerCase();
+
+                if (!extensoes.includes(extensao)) {
+                    problemas.push(`"${arquivo.name}" não é PDF, JPG ou PNG.`);
+                } else if (arquivo.size > tamanhoMaximo) {
+                    problemas.push(`"${arquivo.name}" tem mais de ${formatarTamanho(tamanhoMaximo)}.`);
+                } else if (arquivos.some((existente) => existente.name === arquivo.name && existente.size === arquivo.size)) {
+                    problemas.push(`"${arquivo.name}" já está na lista.`);
+                } else if (arquivos.length >= quantidadeMaxima) {
+                    problemas.push(`"${arquivo.name}" não foi incluído: o limite é de ${quantidadeMaxima} arquivos.`);
+                } else {
+                    arquivos.push(arquivo);
+                }
+            });
+
+            erro.textContent = problemas.join(' ');
+            sincronizar();
+        };
+
+        input.addEventListener('change', () => {
+            // Ao escolher pelo botão, o navegador troca a seleção: junta com a lista atual.
+            const escolhidos = Array.from(input.files);
+            input.value = '';
+            adicionar(escolhidos);
+        });
+
+        ['dragenter', 'dragover'].forEach((tipo) => zona.addEventListener(tipo, (evento) => {
+            evento.preventDefault();
+            zona.classList.add('arrastando');
+        }));
+
+        ['dragleave', 'drop'].forEach((tipo) => zona.addEventListener(tipo, (evento) => {
+            evento.preventDefault();
+            zona.classList.remove('arrastando');
+        }));
+
+        zona.addEventListener('drop', (evento) => adicionar(evento.dataTransfer.files));
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     iniciarMascaras();
     iniciarAvisoUfes();
@@ -151,4 +289,8 @@ document.addEventListener('DOMContentLoaded', () => {
     iniciarConfirmacoes();
     iniciarAlteracaoStatus();
     iniciarTrocaPerfil();
+    iniciarContadores();
+    iniciarDescricaoProjeto();
+    iniciarEnvioUnico();
+    iniciarUploads();
 });
