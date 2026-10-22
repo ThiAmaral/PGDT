@@ -23,7 +23,7 @@ Base: TCC1 de Paulo Henrique Bressanini Rizzi e o documento "Funcionalidades do 
 | 1 | Fundação, autenticação e usuários | RF01, RF02, RF03, RF04 | ✅ |
 | 2 | Cadastros de apoio e Projetos Base | RF05 | ✅ |
 | 3 | Demandas: abertura e triagem | RF06, RF07 | ✅ |
-| 4 | Rastreabilidade e comunicação | RF08 | ⬜ |
+| 4 | Rastreabilidade e comunicação | RF08 | 🟨 |
 | 5 | Sub-projetos, vitrine pública e equipe | RF09, RF10, RF11, RF14 | ⬜ |
 | 6 | Entregas, validação e relatório | RF12, RF13, RF15 | ⬜ |
 | 7 | Complementos (dashboard, notificações, auditoria) | antigos RF04/RF22/RF23 do TCC | ⬜ |
@@ -214,17 +214,35 @@ Regras para evitar erro do usuário:
 
 ---
 
-## Fase 4 — Rastreabilidade e comunicação ⬜
+## Fase 4 — Rastreabilidade e comunicação 🟨
 
 **RF:** RF08
 
 ### Entregáveis
-- [ ] Tabelas `historicos` e `mensagens`.
-- [ ] Registro automático no histórico a cada mudança de status ou ação relevante (via Observer/Event do Laravel).
-- [ ] Barra de progresso visual na tela da demanda.
-- [ ] Linha do tempo cronológica do histórico.
-- [ ] Chat da demanda (autor, perfil, data/hora, texto) com o botão "Enviar Comentário".
-- [ ] Acesso restrito aos envolvidos (policy).
+- [x] Tabelas `historicos` e `mensagens`.
+- [x] Registro automático no histórico a cada mudança de status ou ação relevante (via Observer/Event do Laravel).
+- [x] Barra de progresso visual na tela da demanda.
+- [x] Linha do tempo cronológica do histórico.
+- [x] Chat da demanda (autor, perfil, data/hora, texto) com o botão "Enviar Comentário".
+- [x] Acesso restrito aos envolvidos (policy).
+
+### Como foi implementado (2026-10-21)
+- **Código:** branch `feature/fase4-rastreabilidade`. Migration `2026_10_21_000003_create_historicos_mensagens_tables`; enum `TipoHistorico`; models `Historico` e `Mensagem`; `SolicitacaoObserver`; `MensagemController`; parciais `_progresso`, `_linha-do-tempo` e `_chat` na tela da demanda.
+- **Histórico automático:** o `SolicitacaoObserver` grava a abertura ("Demanda aberta"), cada mudança de status (de/para e o motivo, quando há) e cada classificação ("Demanda classificada" e, nas revisões, "Classificação revista" só com o que mudou). Guarda os nomes da categoria e da prioridade, para a linha do tempo não mudar se o admin renomear um item. Status e histórico são gravados na mesma transação (`updateOrFail`). O histórico não pode ser editado nem apagado (o model recusa).
+- **Demandas antigas:** a migration criou o registro "Demanda aberta" para as demandas que já existiam; as mudanças de status feitas antes desta fase não têm registro.
+- **Barra de progresso:** Cadastrada → Em Análise → Priorizada → Em Desenvolvimento → Em Validação → Concluída. "Aguardando Ajustes" aparece na etapa de validação. Recusada ou cancelada, a barra marca com ✕ a etapa em que a demanda parou (tirada do histórico). No celular, só o nome da etapa atual aparece.
+- **Linha do tempo:** na coluna da direita, da mais antiga para a mais recente, com quem fez e quando.
+- **Chat:** rota `POST /demandas/{id}/mensagens` (limite de 20 envios por minuto). Mostra autor, perfil, data/hora e texto; as mensagens do próprio usuário ficam à direita. Até 2.000 caracteres. O perfil do autor é guardado na mensagem.
+- **Acesso:** quem vê a demanda (demandante dela, coordenador do projeto e admin) vê o histórico e o chat; o estudante entra na Fase 5, quando houver equipe.
+- **Testes:** 16 testes novos (`RastreabilidadeTest`); 93 no total, todos passando.
+- **Teste no navegador:** como demandante, enviei um comentário na demanda de teste; como admin, respondi, passei a demanda para Em Análise e de volta para Priorizada, e as duas mudanças apareceram na linha do tempo. Conferido também no celular. Corrigido: espaços em branco a mais dentro do balão da mensagem.
+
+### Decisões de implementação (aguardam aprovação do autor)
+- (a) Mensagens do chat não podem ser editadas nem apagadas, para a conversa valer como registro.
+- (b) O chat fica só para leitura quando a demanda está `Concluída` ou `Cancelada`; em `Recusada` continua aberto, porque a demanda pode ser reaberta.
+- (c) Todos os envolvidos veem na linha do tempo o nome de quem fez cada ação (inclusive o demandante, que antes não via quem fez a triagem).
+- (d) `mensagens.perfil` guarda o perfil do autor no envio; `historicos.usuario_id` aceita nulo para mudanças feitas fora de uma sessão de usuário (DER atualizado).
+- (e) Sem aviso de nova mensagem por e-mail ou no painel nesta fase; as notificações ficam para a Fase 7.
 
 **Critério de conclusão:** demandante e coordenador trocam mensagens em uma demanda e veem cada mudança de status registrada.
 
@@ -358,3 +376,4 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-21 | 3 | Fase 3 iniciada na branch `feature/fase3-demandas`. |
 | 2026-10-21 | 3 | Entregáveis da Fase 3 implementados: demandas com anexos (upload arrasta-e-solta, arquivos fora da pasta pública), "Minhas demandas", fila de triagem, classificação e status iniciais. 77 testes passando; migration rodada no MySQL local; fluxo conferido no navegador (computador e celular). Aguarda validação do autor para juntar na `main`. |
 | 2026-10-21 | 3 | Autor aprovou a Fase 3 e as decisões de implementação (a)–(g). **Fase 3 concluída**: branch `feature/fase3-demandas` juntada na `main` e enviada ao GitHub. |
+| 2026-10-21 | 4 | Fase 4 iniciada na branch `feature/fase4-rastreabilidade`. Entregáveis implementados: tabelas `historicos` e `mensagens`, registro automático pelo Observer, barra de progresso, linha do tempo e chat com acesso restrito. 93 testes passando; migration rodada no MySQL local; fluxo conferido no navegador (computador e celular). Aguarda validação do autor e das decisões (a)–(e) para juntar na `main`. |

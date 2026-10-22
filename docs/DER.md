@@ -195,13 +195,13 @@ Seeder: Projeto Base **"Demandas Gerais"** (decisão da Fase 0).
 |---|---|---|
 | id | bigint PK | |
 | solicitacao_id | FK `solicitacoes` | |
-| usuario_id | FK `usuarios` | quem fez |
+| usuario_id | FK `usuarios` | quem fez; nulo só se a mudança não veio de um usuário logado (ex.: comando de manutenção) |
 | tipo | varchar(30) | `status`, `triagem`, `subprojeto`, `carga_horaria`, `equipe`, `entrega`, `validacao`, `outro` |
 | descricao | varchar(255) | texto exibido na linha do tempo |
 | dados | json | detalhes, ex.: `{"de": 40, "para": 60}` para carga horária ou `{"de": "priorizada", "para": "em_desenvolvimento"}` |
 | created_at | timestamp | |
 
-**`mensagens`** — chat da demanda: `id`, `solicitacao_id`, `usuario_id`, `texto`, `created_at`.
+**`mensagens`** — chat da demanda: `id`, `solicitacao_id`, `usuario_id`, `perfil` (perfil do autor no momento do envio), `texto` (até 2.000 caracteres), `created_at`. Não é editada nem apagada.
 
 ### Fase 5 — Sub-projetos e equipe
 

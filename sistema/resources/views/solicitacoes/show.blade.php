@@ -16,6 +16,9 @@
         <span class="small text-muted ms-1">Aberta em {{ $solicitacao->created_at->format('d/m/Y \à\s H:i') }}</span>
     </div>
 
+    {{-- RF08: barra de progresso. --}}
+    @include('solicitacoes._progresso')
+
     @if ($solicitacao->motivo_status)
         <div class="alert alert-{{ $solicitacao->status === \App\Enums\StatusDemanda::Recusada ? 'danger' : 'secondary' }}">
             <strong>Motivo ({{ mb_strtolower($solicitacao->status->rotulo()) }}):</strong> {{ $solicitacao->motivo_status }}
@@ -41,7 +44,7 @@
                 </div>
             </div>
 
-            <div class="card shadow-sm">
+            <div class="card shadow-sm mb-3">
                 <div class="card-body">
                     <h2 class="h6 text-muted">Anexos</h2>
                     @forelse ($solicitacao->anexos as $anexo)
@@ -57,6 +60,9 @@
                     @endforelse
                 </div>
             </div>
+
+            {{-- RF08: chat da demanda. --}}
+            @include('solicitacoes._chat')
         </div>
 
         <div class="col-lg-4">
@@ -160,7 +166,7 @@
 
             {{-- Mudança manual de status (decisão da Fase 0). --}}
             @if ($statusDisponiveis)
-                <div class="card shadow-sm">
+                <div class="card shadow-sm mb-3">
                     <div class="card-body">
                         @if ($ehDemandante)
                             <details @if ($errors->has('motivo_status')) open @endif>
@@ -213,6 +219,9 @@
                     </div>
                 </div>
             @endif
+
+            {{-- RF08: linha do tempo. --}}
+            @include('solicitacoes._linha-do-tempo')
         </div>
     </div>
 </div>

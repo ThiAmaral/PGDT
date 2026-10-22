@@ -5,8 +5,11 @@ namespace App\Models;
 use App\Enums\Complexidade;
 use App\Enums\Perfil;
 use App\Enums\StatusDemanda;
+use App\Enums\TipoHistorico;
+use App\Observers\SolicitacaoObserver;
 use Database\Factories\SolicitacaoFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,12 +17,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * Demanda aberta pelo demandante (RF06) e classificada pelo coordenador (RF07).
+ * Demanda aberta pelo demandante (RF06), classificada pelo coordenador (RF07) e acompanhada
+ * pela linha do tempo e pelo chat (RF08).
  */
 #[Fillable([
     'projeto_base_id', 'demandante_id', 'escola_instituicao_id', 'titulo', 'descricao', 'justificativa', 'publico_afetado',
     'status', 'motivo_status', 'categoria_id', 'prioridade_id', 'complexidade', 'triado_por', 'triado_em',
 ])]
+#[ObservedBy(SolicitacaoObserver::class)]
 class Solicitacao extends Model
 {
     /** @use HasFactory<SolicitacaoFactory> */
@@ -97,6 +102,26 @@ class Solicitacao extends Model
     }
 
     /**
+     * Linha do tempo da demanda (RF08), da mais antiga para a mais recente.
+     *
+     * @return HasMany<Historico, $this>
+     */
+    public function historicos(): HasMany
+    {
+        return $this->hasMany(Historico::class)->orderBy('created_at')->orderBy('id');
+    }
+
+    /**
+     * Chat da demanda (RF08), da mais antiga para a mais recente.
+     *
+     * @return HasMany<Mensagem, $this>
+     */
+    public function mensagens(): HasMany
+    {
+        return $this->hasMany(Mensagem::class)->orderBy('created_at')->orderBy('id');
+    }
+
+    /**
      * Demandas que o usuário pode ver: o admin vê todas; o coordenador, as dos projetos
      * que coordena; o demandante, as que abriu.
      *
@@ -146,5 +171,22 @@ class Solicitacao extends Model
     public function foiTriada(): bool
     {
         return $this->categoria_id !== null && $this->prioridade_id !== null && $this->complexidade !== null;
+    }
+
+    /**
+     * Etapa da barra de progresso. Recusada ou cancelada, a demanda fica na etapa em que estava
+     * antes, conforme o histórico.
+     */
+    public function etapaDoProgresso(): int
+    {
+        if ($this->status->etapa() !== null) {
+            return $this->status->etapa();
+        }
+
+        $anterior = $this->historicos
+            ->where('tipo', TipoHistorico::Status)
+            ->last(fn (Historico $historico) => ($historico->dados['para'] ?? null) === $this->status->value);
+
+        return StatusDemanda::tryFrom($anterior?->dados['de'] ?? '')?->etapa() ?? 0;
     }
 }

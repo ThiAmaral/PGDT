@@ -91,6 +91,36 @@ enum StatusDemanda: string
     }
 
     /**
+     * Etapas da barra de progresso (RF08), na ordem do fluxo principal.
+     *
+     * @return list<self>
+     */
+    public static function etapas(): array
+    {
+        return [self::Cadastrada, self::EmAnalise, self::Priorizada, self::EmDesenvolvimento, self::EmValidacao, self::Concluida];
+    }
+
+    /**
+     * Posição do status na barra de progresso. "Aguardando Ajustes" fica na etapa de validação;
+     * "Recusada" e "Cancelada" não são etapas: a barra mostra onde a demanda parou.
+     */
+    public function etapa(): ?int
+    {
+        $status = $this === self::AguardandoAjustes ? self::EmValidacao : $this;
+        $posicao = array_search($status, self::etapas(), true);
+
+        return $posicao === false ? null : $posicao;
+    }
+
+    /**
+     * Status finais: a demanda não anda mais e o chat fica só para leitura.
+     */
+    public function encerrada(): bool
+    {
+        return in_array($this, [self::Concluida, self::Cancelada], true);
+    }
+
+    /**
      * @return array<string, string>
      */
     public static function opcoes(): array
