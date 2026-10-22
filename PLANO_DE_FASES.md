@@ -24,7 +24,7 @@ Base: TCC1 de Paulo Henrique Bressanini Rizzi e o documento "Funcionalidades do 
 | 2 | Cadastros de apoio e Projetos Base | RF05 | ✅ |
 | 3 | Demandas: abertura e triagem | RF06, RF07 | ✅ |
 | 4 | Rastreabilidade e comunicação | RF08 | ✅ |
-| 5 | Sub-projetos, vitrine pública e equipe | RF09, RF10, RF11, RF14 | 🟨 |
+| 5 | Sub-projetos, vitrine pública e equipe | RF09, RF10, RF11, RF14 | ✅ |
 | 6 | Entregas, validação e relatório | RF12, RF13, RF15 | ⬜ |
 | 7 | Complementos (dashboard, notificações, auditoria) | antigos RF04/RF22/RF23 do TCC | ⬜ |
 | 8 | Testes, validação com usuários e implantação | RNF01–RNF05 | ⬜ |
@@ -248,7 +248,7 @@ Regras para evitar erro do usuário:
 
 ---
 
-## Fase 5 — Sub-projetos, vitrine pública e equipe 🟨
+## Fase 5 — Sub-projetos, vitrine pública e equipe ✅
 
 **RFs:** RF09 Criação de Sub-projetos · RF10 Vitrine de Oportunidades · RF11 Gestão de Lotação · RF14 Consulta Pública de Projetos
 
@@ -276,7 +276,7 @@ Regras para evitar erro do usuário:
 - **Teste no navegador:** como admin, criei o sub-projeto da demanda de teste (presencial, 2 vagas, 40 h). Como visitante, cliquei em "Quero participar", criei a estudante de teste pelo cadastro, confirmei o e-mail (link no `laravel.log`) e, ainda pendente, vi o botão desabilitado com o motivo. Depois da aprovação pelo admin, entrei, voltei ao sub-projeto e me candidatei com um clique. Como admin, aprovei como Responsável Técnico, corrigi a carga horária para 48 h e conferi as duas ações na linha do tempo. Conferido também no celular. A conta de teste da estudante está anotada no `.env` local.
 - **Ajuste durante o teste:** quando o admin cria o sub-projeto, o responsável passa a ser o coordenador do projeto (a página pública mostraria "Administrador" como coordenação).
 
-### Decisões de implementação (aguardam aprovação do autor)
+### Decisões de implementação (aprovadas pelo autor em 2026-10-21)
 - (a) O sub-projeto só é criado com a demanda "Priorizada", uma vez por demanda. Criar não muda o status; "Em Desenvolvimento" só aparece na lista depois que o sub-projeto existe.
 - (b) Responsável: o coordenador que cria. Se quem cria é o admin, fica o coordenador do Projeto Base (ou o admin, se o projeto não tiver coordenador). O responsável também gerencia a demanda e a equipe, mesmo que o admin troque depois o coordenador do Projeto Base.
 - (c) Com a demanda "Concluída", "Cancelada" ou "Recusada", o sub-projeto sai da vitrine e os dados e a equipe não mudam mais; só a carga horária pode ser corrigida.
@@ -377,6 +377,7 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-21 | Decisões de implementação da Fase 2 (aprovadas pelo autor junto com a fase): (a) o coordenador edita só os projetos que coordena; (b) só o admin troca o coordenador responsável; (c) Projeto Base e itens de domínio não são apagados, só inativados; (d) `projetos_base.coordenador_id` aceita nulo só para o "Demandas Gerais" até o admin definir o coordenador; (e) demandante e estudante consultam a lista de projetos ativos. | Segurança, rastreabilidade e a decisão da Fase 0 sobre "Demandas Gerais". |
 | 2026-10-21 | Decisões de implementação da Fase 3 (aprovadas pelo autor junto com a fase): (a) o coordenador vê e classifica só as demandas dos projetos que coordena; as do "Demandas Gerais" sem coordenador ficam com o admin; (b) até 5 anexos por demanda, opcionais; (c) o demandante não edita a demanda depois de enviada (ajustes vão pelo chat da Fase 4); (d) "Priorizada" só depois de categoria, prioridade e complexidade definidas; (e) a triagem pode ser revista até "Priorizada"; (f) uma demanda recusada pode ser reaberta para "Em Análise"; (g) o histórico das mudanças de status (tabela `historicos`) entra na Fase 4; até lá fica gravado só o status atual, o motivo e quem fez a triagem. | Segurança e coerência com as decisões da Fase 0. |
 | 2026-10-21 | Decisões de implementação da Fase 4 (aprovadas pelo autor junto com a fase): (a) mensagens do chat não são editadas nem apagadas; (b) o chat fica só para leitura em "Concluída" e "Cancelada" e continua aberto em "Recusada"; (c) todos os envolvidos veem na linha do tempo quem fez cada ação; (d) `mensagens.perfil` guarda o perfil do autor no envio e `historicos.usuario_id` aceita nulo para mudanças fora de uma sessão de usuário; (e) sem aviso de nova mensagem nesta fase (fica para a Fase 7). | Rastreabilidade e coerência com as decisões da Fase 0. |
+| 2026-10-21 | Decisões de implementação da Fase 5 (aprovadas pelo autor junto com a fase): (a) o sub-projeto só é criado com a demanda "Priorizada", uma vez por demanda, e "Em Desenvolvimento" só aparece depois dele; (b) o responsável é o coordenador que cria (se for o admin, o coordenador do Projeto Base); (c) com a demanda concluída, cancelada ou recusada, só a carga horária pode ser corrigida; (d) a equipe completa tira o sub-projeto da vitrine; (e) quem cancela a candidatura pode se candidatar de novo, quem foi recusado ou removido não; (f) mudanças na equipe vão para a linha do tempo, candidaturas não; (g) o estudante da equipe não vê os contatos do demandante; (h) a página pública não mostra a carga horária e omite projetos ocultos; (i) o formulário avisa que o escopo é público. | Segurança, LGPD e coerência com as decisões da Fase 0. |
 
 ## Registro de progresso
 
@@ -403,3 +404,4 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-21 | 4 | Fase 4 iniciada na branch `feature/fase4-rastreabilidade`. Entregáveis implementados: tabelas `historicos` e `mensagens`, registro automático pelo Observer, barra de progresso, linha do tempo e chat com acesso restrito. 93 testes passando; migration rodada no MySQL local; fluxo conferido no navegador (computador e celular). Aguarda validação do autor e das decisões (a)–(e) para juntar na `main`. |
 | 2026-10-21 | 4 | Autor aprovou a Fase 4 e as decisões de implementação (a)–(e). **Fase 4 concluída**: branch `feature/fase4-rastreabilidade` juntada na `main` e enviada ao GitHub. |
 | 2026-10-21 | 5 | Fase 5 iniciada na branch `feature/fase5-subprojetos`. Entregáveis implementados: sub-projetos com carga horária no histórico, vitrine de oportunidades, candidaturas, equipe com papéis e página pública `/projetos`. 127 testes passando; migration rodada no MySQL local; critério de conclusão conferido no navegador (computador e celular). Aguarda validação do autor e das decisões (a)–(i) para juntar na `main`. |
+| 2026-10-21 | 5 | Autor aprovou a Fase 5 e as decisões de implementação (a)–(i). **Fase 5 concluída**: branch `feature/fase5-subprojetos` juntada na `main` e enviada ao GitHub. |
