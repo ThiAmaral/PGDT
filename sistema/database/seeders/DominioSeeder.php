@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\CategoriaDemanda;
+use App\Models\PapelEquipe;
 use App\Models\Prioridade;
 use App\Models\Tipologia;
 use Illuminate\Database\Seeder;
@@ -35,6 +36,11 @@ class DominioSeeder extends Seeder
 
         foreach (['Urgente', 'Alta', 'Média', 'Baixa'] as $ordem => $nome) {
             Prioridade::firstOrCreate(['nome' => $nome], ['ordem' => ($ordem + 1) * 10]);
+        }
+
+        // Papéis iniciais da equipe do sub-projeto (DER, ponto 3).
+        foreach (['Membro Desenvolvedor', 'Responsável Técnico', 'Apoio de Campo'] as $nome) {
+            PapelEquipe::firstOrCreate(['nome' => $nome]);
         }
     }
 }

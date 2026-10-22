@@ -121,6 +121,24 @@ enum StatusDemanda: string
     }
 
     /**
+     * Status em que o sub-projeto recebe candidaturas e a equipe pode mudar (RF10 e RF11).
+     */
+    public function permiteEquipe(): bool
+    {
+        return ! in_array($this, self::semEquipe(), true);
+    }
+
+    /**
+     * Status em que o sub-projeto não recebe candidaturas nem muda a equipe.
+     *
+     * @return list<self>
+     */
+    public static function semEquipe(): array
+    {
+        return [self::Concluida, self::Cancelada, self::Recusada];
+    }
+
+    /**
      * @return array<string, string>
      */
     public static function opcoes(): array

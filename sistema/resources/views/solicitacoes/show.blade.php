@@ -7,7 +7,11 @@
 @section('content')
 <div class="container">
     <div class="mb-2">
-        <a href="{{ route('demandas.index') }}" class="small">&larr; {{ $ehDemandante ? 'Minhas demandas' : 'Demandas' }}</a>
+        @if (auth()->user()->temPerfil(\App\Enums\Perfil::Estudante))
+            <a href="{{ route('subprojetos.index') }}" class="small">&larr; Meus sub-projetos</a>
+        @else
+            <a href="{{ route('demandas.index') }}" class="small">&larr; {{ $ehDemandante ? 'Minhas demandas' : 'Demandas' }}</a>
+        @endif
     </div>
 
     <div class="mb-3">
@@ -81,7 +85,8 @@
                         <dt class="small text-muted">Demandante</dt>
                         <dd class="mb-0">
                             {{ $solicitacao->demandante->nome }}
-                            @unless ($ehDemandante)
+                            {{-- Contatos do demandante só para a coordenação e o admin. --}}
+                            @can('gerencia', $solicitacao)
                                 @if ($solicitacao->demandante->demandante?->cargo)
                                     <div class="small text-muted">{{ $solicitacao->demandante->demandante->cargo }}</div>
                                 @endif
@@ -89,11 +94,43 @@
                                 @if ($solicitacao->demandante->telefone)
                                     <div class="small">{{ $solicitacao->demandante->telefone }}</div>
                                 @endif
-                            @endunless
+                            @endcan
                         </dd>
                     </dl>
                 </div>
             </div>
+
+            {{-- RF09: sub-projeto criado a partir da demanda. --}}
+            @if ($solicitacao->subprojeto)
+                @php($subprojeto = $solicitacao->subprojeto)
+                <div class="card shadow-sm mb-3 border-primary-subtle">
+                    <div class="card-body">
+                        <h2 class="h6 text-muted">Sub-projeto</h2>
+                        <p class="fw-semibold mb-1">{{ $subprojeto->titulo }}</p>
+                        <dl class="small row g-1 mb-2">
+                            <dt class="col-5 text-muted fw-normal">Modalidade</dt>
+                            <dd class="col-7 mb-0">{{ $subprojeto->modalidade->rotulo() }}</dd>
+                            <dt class="col-5 text-muted fw-normal">Período</dt>
+                            <dd class="col-7 mb-0">{{ $subprojeto->periodo() }}</dd>
+                            <dt class="col-5 text-muted fw-normal">Carga horária</dt>
+                            <dd class="col-7 mb-0">{{ $subprojeto->carga_horaria_estimada }} h (estimada)</dd>
+                            <dt class="col-5 text-muted fw-normal">Equipe</dt>
+                            <dd class="col-7 mb-0">{{ $subprojeto->membros_ativos_count }} de {{ $subprojeto->vagas }} vagas</dd>
+                        </dl>
+                        <a href="{{ route('subprojetos.show', $subprojeto) }}" class="btn btn-sm btn-outline-primary w-100">
+                            {{ auth()->user()->can('gerenciarEquipe', $subprojeto) ? 'Equipe e candidaturas' : 'Ver equipe' }}
+                        </a>
+                    </div>
+                </div>
+            @elseif (auth()->user()->can('create', [\App\Models\Subprojeto::class, $solicitacao]))
+                <div class="card shadow-sm mb-3 border-primary">
+                    <div class="card-body">
+                        <h2 class="h6 text-muted">Sub-projeto</h2>
+                        <p class="small">Demanda priorizada. Crie o sub-projeto para definir escopo, período, carga horária e vagas e abrir as candidaturas dos estudantes.</p>
+                        <a href="{{ route('subprojetos.create', $solicitacao) }}" class="btn btn-primary btn-sm w-100">Criar sub-projeto</a>
+                    </div>
+                </div>
+            @endif
 
             {{-- RF07: triagem. O demandante vê a classificação depois que ela é feita. --}}
             <div class="card shadow-sm mb-3">
@@ -183,6 +220,10 @@
                                 <p class="small text-muted">Classificação feita. Se a análise terminou, mude para "Priorizada".</p>
                             @elseif ($solicitacao->status === \App\Enums\StatusDemanda::EmAnalise)
                                 <p class="small text-muted">Para priorizar, salve antes a categoria, a prioridade e a complexidade.</p>
+                            @elseif ($solicitacao->status === \App\Enums\StatusDemanda::Priorizada && $solicitacao->subprojeto)
+                                <p class="small text-muted">Sub-projeto criado. Se a equipe já pode começar, mude para "Em Desenvolvimento".</p>
+                            @elseif ($solicitacao->status === \App\Enums\StatusDemanda::Priorizada)
+                                <p class="small text-muted">Para mudar para "Em Desenvolvimento", crie antes o sub-projeto.</p>
                             @endif
                         @endunless
 

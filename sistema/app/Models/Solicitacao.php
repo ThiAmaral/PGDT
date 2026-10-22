@@ -15,10 +15,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * Demanda aberta pelo demandante (RF06), classificada pelo coordenador (RF07) e acompanhada
- * pela linha do tempo e pelo chat (RF08).
+ * pela linha do tempo e pelo chat (RF08). Aceita, vira um sub-projeto (RF09).
  */
 #[Fillable([
     'projeto_base_id', 'demandante_id', 'escola_instituicao_id', 'titulo', 'descricao', 'justificativa', 'publico_afetado',
@@ -122,8 +123,19 @@ class Solicitacao extends Model
     }
 
     /**
+     * Sub-projeto criado a partir da demanda (RF09).
+     *
+     * @return HasOne<Subprojeto, $this>
+     */
+    public function subprojeto(): HasOne
+    {
+        return $this->hasOne(Subprojeto::class);
+    }
+
+    /**
      * Demandas que o usuário pode ver: o admin vê todas; o coordenador, as dos projetos
-     * que coordena; o demandante, as que abriu.
+     * que coordena e as dos sub-projetos de que é responsável; o demandante, as que abriu;
+     * o estudante, as dos sub-projetos em que é membro da equipe.
      *
      * @param  Builder<Solicitacao>  $query
      */
@@ -131,8 +143,11 @@ class Solicitacao extends Model
     {
         match ($usuario->perfil) {
             Perfil::Admin => null,
-            Perfil::Coordenador => $query->whereHas('projetoBase', fn (Builder $query) => $query->where('coordenador_id', $usuario->id)),
+            Perfil::Coordenador => $query->where(fn (Builder $query) => $query
+                ->whereHas('projetoBase', fn (Builder $query) => $query->where('coordenador_id', $usuario->id))
+                ->orWhereHas('subprojeto', fn (Builder $query) => $query->where('coordenador_id', $usuario->id))),
             Perfil::Demandante => $query->where('demandante_id', $usuario->id),
+            Perfil::Estudante => $query->whereHas('subprojeto.membrosAtivos', fn (Builder $query) => $query->where('estudante_id', $usuario->id)),
             default => $query->whereRaw('1 = 0'),
         };
     }

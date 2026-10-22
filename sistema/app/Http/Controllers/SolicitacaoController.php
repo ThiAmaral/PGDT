@@ -156,7 +156,7 @@ class SolicitacaoController extends Controller
     {
         Gate::authorize('view', $solicitacao);
 
-        $solicitacao->load(['projetoBase.coordenador', 'demandante.demandante', 'escolaInstituicao', 'categoria', 'prioridade', 'triador', 'anexos', 'historicos.usuario', 'mensagens.autor']);
+        $solicitacao->load(['projetoBase.coordenador', 'demandante.demandante', 'escolaInstituicao', 'categoria', 'prioridade', 'triador', 'anexos', 'historicos.usuario', 'mensagens.autor', 'subprojeto' => fn ($query) => $query->withCount('membrosAtivos')]);
 
         $categorias = CategoriaDemanda::query()->ativos()->get();
         $prioridades = Prioridade::query()->ativos()->get();

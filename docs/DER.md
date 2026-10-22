@@ -211,7 +211,7 @@ Seeder: Projeto Base **"Demandas Gerais"** (decisão da Fase 0).
 |---|---|---|
 | id | bigint PK | |
 | solicitacao_id | FK `solicitacoes` | **único** |
-| coordenador_id | FK `usuarios` | responsável (quem criou) |
+| coordenador_id | FK `usuarios` | responsável: o coordenador que criou; se o admin criou, o coordenador do Projeto Base (ou o admin, se o projeto não tiver coordenador) |
 | titulo | varchar(150) | pré-preenchido da demanda |
 | escopo | text | obrigatório |
 | data_inicio | date | obrigatório |
@@ -219,7 +219,7 @@ Seeder: Projeto Base **"Demandas Gerais"** (decisão da Fase 0).
 | carga_horaria_estimada | smallint unsigned | horas; editável em qualquer status pelo admin ou coordenador; cada mudança gera `historicos.tipo = carga_horaria` |
 | vagas | smallint unsigned | mínimo 1 |
 | modalidade | varchar(15) | `remoto`, `presencial`, `hibrido` |
-| candidaturas_abertas | boolean | fecha quando a equipe completa as vagas ou pelo coordenador |
+| candidaturas_abertas | boolean | controle manual do coordenador; a equipe completa também tira o sub-projeto da vitrine, sem mudar esta coluna |
 
 O Projeto Base do sub-projeto vem de `solicitacoes.projeto_base_id`. Não há uma coluna repetida em `subprojetos`, para os dois valores nunca ficarem diferentes.
 
@@ -233,7 +233,7 @@ O Projeto Base do sub-projeto vem de `solicitacoes.projeto_base_id`. Não há um
 | status | varchar(15) | `pendente`, `aprovada`, `recusada`, `cancelada` |
 | avaliado_por | FK `usuarios` | nulo |
 | avaliado_em | timestamp | nulo |
-| | | **único** (`subprojeto_id`, `estudante_id`) |
+| | | **único** (`subprojeto_id`, `estudante_id`); quem cancelou se candidata de novo na mesma linha, que volta a `pendente` |
 
 **`papeis_equipe`** — `id`, `nome` (único), `ativo`. Seeder: Membro Desenvolvedor, Responsável Técnico, Apoio de Campo.
 
@@ -245,11 +245,13 @@ O Projeto Base do sub-projeto vem de `solicitacoes.projeto_base_id`. Não há um
 | subprojeto_id | FK `subprojetos` | |
 | estudante_id | FK `usuarios` | |
 | papel_id | FK `papeis_equipe` | |
-| candidatura_id | FK `candidaturas` | nulo se o coordenador adicionou direto |
+| candidatura_id | FK `candidaturas` | único; nulo se o membro não veio de uma candidatura |
 | removido_em | timestamp | nulo; remoção sem apagar o histórico |
 | | | **único** (`subprojeto_id`, `estudante_id`) |
 
-Regra: membros ativos (`removido_em` nulo) ≤ `subprojetos.vagas`.
+Regra: membros ativos (`removido_em` nulo) ≤ `subprojetos.vagas`. A aprovação trava a linha do sub-projeto para garantir isso; as vagas não podem ser reduzidas abaixo dos membros ativos.
+
+O sub-projeto recebe candidaturas (vitrine RF10 e página pública RF14) quando `candidaturas_abertas` é verdadeiro, há vagas livres, a demanda não está `concluida`, `cancelada` ou `recusada` e o Projeto Base está ativo (e `publico`, na página pública).
 
 ### Fase 6 — Entregas e validação
 

@@ -17,6 +17,10 @@
                     <a href="{{ route('register') }}" class="btn btn-outline-primary btn-lg">Criar conta</a>
                 @endauth
             </div>
+
+            <p class="mt-4 mb-0">
+                <a href="{{ route('publico.index') }}">Conheça os projetos de extensão e as vagas abertas para estudantes</a>
+            </p>
         </div>
     </div>
 </div>

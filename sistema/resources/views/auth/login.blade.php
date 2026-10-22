@@ -11,6 +11,10 @@
                     <h1 class="h4 mb-1">Entrar</h1>
                     <p class="text-muted small mb-4">Use o e-mail e a senha da sua conta. O sistema reconhece o seu perfil automaticamente.</p>
 
+                    @if (str_contains((string) session('url.intended'), '/oportunidades/'))
+                        <div class="alert alert-info small">Entre com a sua conta de estudante para concluir a inscrição no sub-projeto.</div>
+                    @endif
+
                     <form method="POST" action="{{ route('login') }}" novalidate>
                         @csrf
 

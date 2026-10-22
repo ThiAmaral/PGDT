@@ -2,7 +2,7 @@
     <div class="card-body">
         <h2 class="h6 text-muted">Conversa</h2>
         <p class="small text-muted">
-            Mensagens entre o demandante e a coordenação do projeto. Elas não podem ser editadas nem apagadas.
+            Mensagens entre o demandante, a coordenação do projeto e a equipe do sub-projeto. Elas não podem ser editadas nem apagadas.
         </p>
 
         <div class="chat-demanda mb-3" data-chat-rolagem>

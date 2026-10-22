@@ -7,7 +7,7 @@
                     <span class="ponto bg-{{ $historico->tipo->cor() }}"></span>
                     <div class="small fw-semibold">{{ $historico->descricao }}</div>
 
-                    @if ($historico->tipo === \App\Enums\TipoHistorico::Triagem)
+                    @if ($historico->tipo->listaAlteracoes())
                         <ul class="list-unstyled small mb-0">
                             @foreach ($historico->dados ?? [] as $campo => $valores)
                                 <li class="p-0">
