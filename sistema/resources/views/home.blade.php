@@ -13,6 +13,15 @@
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 shadow-sm">
                         <div class="card-body">
+                            <h2 class="h5">Demandas novas</h2>
+                            <p class="display-6 mb-2">{{ $totalDemandasNovas }}</p>
+                            <a href="{{ route('demandas.index') }}" class="btn btn-primary btn-sm">Abrir a fila</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
                             <h2 class="h5">Cadastros pendentes</h2>
                             <p class="display-6 mb-2">{{ $totalPendentes }}</p>
                             <a href="{{ route('admin.usuarios.index', ['status' => 'pendente']) }}" class="btn btn-primary btn-sm">Analisar cadastros</a>
@@ -59,13 +68,27 @@
             @break
 
         @case(\App\Enums\Perfil::Coordenador)
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h2 class="h5">Seus projetos de extensão</h2>
-                    <p class="display-6 mb-2">{{ $totalMeusProjetos }}</p>
-                    <p class="text-muted">Cadastre os Projetos Base que recebem as demandas das escolas. Em breve: triagem das demandas e montagem das equipes.</p>
-                    <a href="{{ route('projetos-base.index', ['meus' => 1]) }}" class="btn btn-outline-primary btn-sm">Ver meus projetos</a>
-                    <a href="{{ route('projetos-base.create') }}" class="btn btn-primary btn-sm">Novo Projeto Base</a>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h2 class="h5">Demandas novas</h2>
+                            <p class="display-6 mb-2">{{ $totalDemandasNovas }}</p>
+                            <p class="text-muted">Demandas dos seus projetos aguardando análise. Classifique e priorize cada uma.</p>
+                            <a href="{{ route('demandas.index') }}" class="btn btn-primary btn-sm">Abrir a fila</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h2 class="h5">Seus projetos de extensão</h2>
+                            <p class="display-6 mb-2">{{ $totalMeusProjetos }}</p>
+                            <p class="text-muted">Projetos Base que recebem as demandas das escolas.</p>
+                            <a href="{{ route('projetos-base.index', ['meus' => 1]) }}" class="btn btn-outline-primary btn-sm">Ver meus projetos</a>
+                            <a href="{{ route('projetos-base.create') }}" class="btn btn-outline-primary btn-sm">Novo Projeto Base</a>
+                        </div>
+                    </div>
                 </div>
             </div>
             @break
@@ -73,11 +96,26 @@
         @case(\App\Enums\Perfil::Demandante)
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h2 class="h5">Suas demandas</h2>
-                    <p class="text-muted mb-0">
-                        Escola/instituição: {{ $usuario->demandante?->escolaInstituicao?->nomeCompleto() }}.<br>
-                        Em breve você poderá abrir solicitações de apoio tecnológico e acompanhar o andamento.
-                    </p>
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-start gap-2 mb-2">
+                        <div>
+                            <h2 class="h5 mb-1">Suas demandas</h2>
+                            <p class="text-muted small mb-0">Escola/instituição: {{ $usuario->demandante?->escolaInstituicao?->nomeCompleto() }}</p>
+                        </div>
+                        <a href="{{ route('demandas.create') }}" class="btn btn-primary btn-sm">Nova demanda</a>
+                    </div>
+
+                    @forelse ($minhasDemandas as $demanda)
+                        <a href="{{ route('demandas.show', $demanda) }}" class="d-flex justify-content-between align-items-center gap-2 border-top py-2 text-body text-decoration-none">
+                            <span class="text-break">{{ $demanda->titulo }}</span>
+                            <span class="badge text-bg-{{ $demanda->status->cor() }}">{{ $demanda->status->rotulo() }}</span>
+                        </a>
+                    @empty
+                        <p class="text-muted mb-0">Você ainda não abriu nenhuma demanda. Precisa de apoio tecnológico? Clique em "Nova demanda".</p>
+                    @endforelse
+
+                    @if ($minhasDemandas->isNotEmpty())
+                        <a href="{{ route('demandas.index') }}" class="btn btn-outline-primary btn-sm mt-2">Ver todas</a>
+                    @endif
                 </div>
             </div>
             @break

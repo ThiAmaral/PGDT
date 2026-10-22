@@ -7,6 +7,7 @@ use App\Http\Controllers\Cadastro\CadastroController;
 use App\Http\Controllers\Cadastro\ConviteController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProjetoBaseController;
+use App\Http\Controllers\SolicitacaoController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -60,4 +61,14 @@ Route::middleware(['auth', 'verified', 'ativo'])->group(function () {
     Route::resource('projetos-base', ProjetoBaseController::class)
         ->parameters(['projetos-base' => 'projetoBase'])
         ->except('destroy');
+
+    // RF06 e RF07: demandas. As permissões ficam na SolicitacaoPolicy.
+    Route::resource('demandas', SolicitacaoController::class)
+        ->parameters(['demandas' => 'solicitacao'])
+        ->only(['index', 'create', 'store', 'show']);
+    Route::patch('/demandas/{solicitacao}/triagem', [SolicitacaoController::class, 'triar'])->name('demandas.triagem');
+    Route::patch('/demandas/{solicitacao}/status', [SolicitacaoController::class, 'alterarStatus'])->name('demandas.status');
+    Route::get('/demandas/{solicitacao}/anexos/{anexo}', [SolicitacaoController::class, 'baixarAnexo'])
+        ->scopeBindings()
+        ->name('demandas.anexo');
 });
