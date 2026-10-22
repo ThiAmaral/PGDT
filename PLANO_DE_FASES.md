@@ -21,7 +21,7 @@ Base: TCC1 de Paulo Henrique Bressanini Rizzi e o documento "Funcionalidades do 
 |---|---|---|---|
 | 0 | Decisões e preparação do ambiente | — | ✅ |
 | 1 | Fundação, autenticação e usuários | RF01, RF02, RF03, RF04 | ✅ |
-| 2 | Cadastros de apoio e Projetos Base | RF05 | 🟨 |
+| 2 | Cadastros de apoio e Projetos Base | RF05 | ✅ |
 | 3 | Demandas: abertura e triagem | RF06, RF07 | ⬜ |
 | 4 | Rastreabilidade e comunicação | RF08 | ⬜ |
 | 5 | Sub-projetos, vitrine pública e equipe | RF09, RF10, RF11, RF14 | ⬜ |
@@ -156,7 +156,7 @@ Regras para evitar erro do usuário:
 
 ---
 
-## Fase 2 — Cadastros de apoio e Projetos Base 🟨
+## Fase 2 — Cadastros de apoio e Projetos Base ✅
 
 **RF:** RF05 Cadastro de Projetos Base
 
@@ -320,7 +320,7 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-18 | DER aprovado: o demandante escolhe a escola da lista ou digita uma nova (conferida pelo admin na aprovação); membro removido não aparece no RF15; papéis iniciais Membro Desenvolvedor, Responsável Técnico e Apoio de Campo; todo Projeto Base ativo é público por padrão, e o coordenador pode ocultar. | Pedido do autor. |
 | 2026-10-18 | Decisões de implementação da Fase 1: (a) a confirmação de e-mail vale só para o estudante, como decidido na Fase 0; (b) senha com no mínimo 8 caracteres, letras e números; (c) escola digitada pelo demandante nasce inativa e é ativada na aprovação; (d) o admin não altera o próprio status ou perfil; (e) na troca de perfil, os dados do perfil anterior ficam guardados; (f) estudante sem e-mail confirmado não pode ser aprovado. | Segurança e coerência com as decisões da Fase 0; aprovadas pelo autor junto com a Fase 1. |
 | 2026-10-18 | Laravel Boost instalado como dependência de desenvolvimento. | Pedido pelo `CLAUDE.md` do projeto Laravel. |
-| 2026-10-21 | Decisões de implementação da Fase 2 (aguardam aprovação do autor): (a) o coordenador edita só os projetos que coordena; (b) só o admin troca o coordenador responsável; (c) Projeto Base e itens de domínio não são apagados, só inativados; (d) `projetos_base.coordenador_id` aceita nulo só para o "Demandas Gerais" até o admin definir o coordenador; (e) demandante e estudante consultam a lista de projetos ativos. | Segurança, rastreabilidade e a decisão da Fase 0 sobre "Demandas Gerais". |
+| 2026-10-21 | Decisões de implementação da Fase 2 (aprovadas pelo autor junto com a fase): (a) o coordenador edita só os projetos que coordena; (b) só o admin troca o coordenador responsável; (c) Projeto Base e itens de domínio não são apagados, só inativados; (d) `projetos_base.coordenador_id` aceita nulo só para o "Demandas Gerais" até o admin definir o coordenador; (e) demandante e estudante consultam a lista de projetos ativos. | Segurança, rastreabilidade e a decisão da Fase 0 sobre "Demandas Gerais". |
 
 ## Registro de progresso
 
@@ -340,3 +340,4 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-18 | — | Passo a passo de instalação em máquina nova salvo em `docs/INSTALACAO.md`. |
 | 2026-10-21 | 2 | Fase 2 iniciada na branch `feature/fase2-projetos-base`. Entregáveis implementados: tabelas de domínio com seeders, cadastros de apoio do admin, CRUD e listagem de Projetos Base com permissões por perfil. 53 testes passando; migrations e seeders rodados no MySQL local. Falta a conferência no navegador com login e a validação do autor. |
 | 2026-10-21 | 2 | Telas conferidas no navegador como admin; duas correções de formulário feitas. Aguarda validação do autor (incluindo o fluxo do coordenador, que precisa de um coordenador convidado) para juntar na `main`. |
+| 2026-10-21 | 2 | Autor cadastrou um coordenador pelo convite (link lido no `laravel.log`, pois o ambiente local usa `MAIL_MAILER=log`) e aprovou a Fase 2. **Fase 2 concluída**: branch `feature/fase2-projetos-base` juntada na `main`. |
