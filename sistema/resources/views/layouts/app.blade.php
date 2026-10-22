@@ -43,7 +43,22 @@
                                         <li class="nav-item">
                                             <a class="nav-link @if (request()->routeIs('admin.convites.*')) active @endif" href="{{ route('admin.convites.index') }}">Convites</a>
                                         </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link @if (request()->routeIs('projetos-base.*')) active @endif" href="{{ route('projetos-base.index') }}">Projetos Base</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link @if (request()->routeIs('admin.dominios.*')) active @endif" href="{{ route('admin.dominios.index', 'tipologias') }}">Cadastros de apoio</a>
+                                        </li>
                                         @break
+                                    @case(\App\Enums\Perfil::Coordenador)
+                                        <li class="nav-item">
+                                            <a class="nav-link @if (request()->routeIs('projetos-base.*')) active @endif" href="{{ route('projetos-base.index') }}">Projetos Base</a>
+                                        </li>
+                                        @break
+                                    @default
+                                        <li class="nav-item">
+                                            <a class="nav-link @if (request()->routeIs('projetos-base.*')) active @endif" href="{{ route('projetos-base.index') }}">Projetos de extensão</a>
+                                        </li>
                                 @endswitch
                             @endif
                         @endauth

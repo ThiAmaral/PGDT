@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\Perfil;
 use App\Enums\StatusUsuario;
+use App\Models\ProjetoBase;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -21,6 +22,9 @@ class HomeController extends Controller
             'usuario' => $usuario,
             'totalPendentes' => $usuario->temPerfil(Perfil::Admin)
                 ? Usuario::where('status', StatusUsuario::Pendente)->whereNotNull('email_verified_at')->count()
+                : 0,
+            'totalMeusProjetos' => $usuario->temPerfil(Perfil::Coordenador)
+                ? ProjetoBase::where('coordenador_id', $usuario->id)->count()
                 : 0,
         ]);
     }

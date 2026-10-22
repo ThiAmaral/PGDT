@@ -37,6 +37,24 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h2 class="h5">Projetos Base</h2>
+                            <p class="text-muted">Projetos de extensão que recebem as demandas e seus coordenadores.</p>
+                            <a href="{{ route('projetos-base.index') }}" class="btn btn-outline-primary btn-sm">Abrir projetos</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h2 class="h5">Cadastros de apoio</h2>
+                            <p class="text-muted">Tipologias, categorias de demanda e prioridades.</p>
+                            <a href="{{ route('admin.dominios.index', 'tipologias') }}" class="btn btn-outline-primary btn-sm">Abrir cadastros</a>
+                        </div>
+                    </div>
+                </div>
             </div>
             @break
 
@@ -44,7 +62,10 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h2 class="h5">Seus projetos de extensão</h2>
-                    <p class="text-muted mb-0">Em breve você poderá cadastrar Projetos Base, fazer a triagem das demandas e montar as equipes.</p>
+                    <p class="display-6 mb-2">{{ $totalMeusProjetos }}</p>
+                    <p class="text-muted">Cadastre os Projetos Base que recebem as demandas das escolas. Em breve: triagem das demandas e montagem das equipes.</p>
+                    <a href="{{ route('projetos-base.index', ['meus' => 1]) }}" class="btn btn-outline-primary btn-sm">Ver meus projetos</a>
+                    <a href="{{ route('projetos-base.create') }}" class="btn btn-primary btn-sm">Novo Projeto Base</a>
                 </div>
             </div>
             @break

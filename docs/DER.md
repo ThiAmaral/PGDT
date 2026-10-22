@@ -147,7 +147,7 @@ Tabelas padrão do Laravel que continuam: `password_reset_tokens`, `sessions`, `
 | data_inicio | date | obrigatório |
 | data_fim | date | opcional; ≥ `data_inicio` |
 | tipologia_id | FK `tipologias` | obrigatório |
-| coordenador_id | FK `usuarios` | perfil `coordenador` |
+| coordenador_id | FK `usuarios` | perfil `coordenador`; nulo só no "Demandas Gerais" até o admin definir |
 | publico | boolean | padrão `true`; aparece na página pública (RF14) |
 | ativo | boolean | padrão `true`; só ativos recebem demandas |
 
