@@ -156,7 +156,7 @@ class SolicitacaoController extends Controller
     {
         Gate::authorize('view', $solicitacao);
 
-        $solicitacao->load(['projetoBase.coordenador', 'demandante.demandante', 'escolaInstituicao', 'categoria', 'prioridade', 'triador', 'anexos']);
+        $solicitacao->load(['projetoBase.coordenador', 'demandante.demandante', 'escolaInstituicao', 'categoria', 'prioridade', 'triador', 'anexos', 'historicos.usuario', 'mensagens.autor']);
 
         $categorias = CategoriaDemanda::query()->ativos()->get();
         $prioridades = Prioridade::query()->ativos()->get();
@@ -199,7 +199,8 @@ class SolicitacaoController extends Controller
             'prioridade_id' => 'prioridade',
         ]);
 
-        $solicitacao->update([
+        // updateOrFail: a classificação e o registro no histórico são gravados juntos ou nenhum dos dois.
+        $solicitacao->updateOrFail([
             ...$dados,
             'triado_por' => $request->user()->id,
             'triado_em' => now(),
@@ -237,7 +238,7 @@ class SolicitacaoController extends Controller
             return back()->withErrors(['status' => 'Defina categoria, prioridade e complexidade antes de priorizar a demanda.']);
         }
 
-        $solicitacao->update([
+        $solicitacao->updateOrFail([
             'status' => $novoStatus,
             'motivo_status' => $novoStatus->exigeMotivo() ? $motivo : null,
         ]);

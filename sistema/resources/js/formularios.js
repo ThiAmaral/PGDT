@@ -282,6 +282,13 @@ function iniciarUploads() {
     });
 }
 
+/** Chat da demanda: abre mostrando os comentários mais recentes. */
+function iniciarChat() {
+    document.querySelectorAll('[data-chat-rolagem]').forEach((chat) => {
+        chat.scrollTop = chat.scrollHeight;
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     iniciarMascaras();
     iniciarAvisoUfes();
@@ -293,4 +300,5 @@ document.addEventListener('DOMContentLoaded', () => {
     iniciarDescricaoProjeto();
     iniciarEnvioUnico();
     iniciarUploads();
+    iniciarChat();
 });

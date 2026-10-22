@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\UsuarioController;
 use App\Http\Controllers\Cadastro\CadastroController;
 use App\Http\Controllers\Cadastro\ConviteController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MensagemController;
 use App\Http\Controllers\ProjetoBaseController;
 use App\Http\Controllers\SolicitacaoController;
 use Illuminate\Support\Facades\Auth;
@@ -71,4 +72,9 @@ Route::middleware(['auth', 'verified', 'ativo'])->group(function () {
     Route::get('/demandas/{solicitacao}/anexos/{anexo}', [SolicitacaoController::class, 'baixarAnexo'])
         ->scopeBindings()
         ->name('demandas.anexo');
+
+    // RF08: chat da demanda. A linha do tempo é gravada pelo SolicitacaoObserver.
+    Route::post('/demandas/{solicitacao}/mensagens', [MensagemController::class, 'store'])
+        ->middleware('throttle:20,1')
+        ->name('demandas.mensagens.store');
 });

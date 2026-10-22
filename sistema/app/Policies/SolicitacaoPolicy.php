@@ -8,8 +8,8 @@ use App\Models\Solicitacao;
 use App\Models\Usuario;
 
 /**
- * RF06 e RF07: o demandante abre e acompanha as suas demandas; o coordenador faz a triagem
- * das demandas dos projetos que coordena; o admin vê e gerencia todas.
+ * RF06, RF07 e RF08: o demandante abre e acompanha as suas demandas; o coordenador faz a triagem
+ * das demandas dos projetos que coordena; o admin vê e gerencia todas. Os três conversam no chat.
  */
 class SolicitacaoPolicy
 {
@@ -34,6 +34,14 @@ class SolicitacaoPolicy
     public function triar(Usuario $usuario, Solicitacao $solicitacao): bool
     {
         return $this->gerencia($usuario, $solicitacao) && $solicitacao->status->permiteTriagem();
+    }
+
+    /**
+     * RF08: quem vê a demanda conversa no chat enquanto ela não estiver concluída ou cancelada.
+     */
+    public function comentar(Usuario $usuario, Solicitacao $solicitacao): bool
+    {
+        return $this->view($usuario, $solicitacao) && ! $solicitacao->status->encerrada();
     }
 
     public function alterarStatus(Usuario $usuario, Solicitacao $solicitacao): bool

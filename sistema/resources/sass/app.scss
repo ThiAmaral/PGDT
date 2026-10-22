@@ -29,3 +29,125 @@
         background-color: tint-color($primary, 90%);
     }
 }
+
+// Barra de progresso da demanda (RF08)
+.progresso-demanda {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+        flex: 1 1 0;
+        position: relative;
+        text-align: center;
+        font-size: .75rem;
+        color: $text-muted;
+
+        // Linha que liga uma etapa à anterior.
+        &:not(:first-child)::before {
+            content: '';
+            position: absolute;
+            top: .75rem;
+            right: 50%;
+            width: 100%;
+            height: 3px;
+            background-color: $gray-300;
+            z-index: 0;
+        }
+
+        &.feita::before,
+        &.atual::before {
+            background-color: $primary;
+        }
+    }
+
+    .marcador {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.5rem;
+        height: 1.5rem;
+        margin: 0 auto .25rem;
+        border-radius: 50%;
+        background-color: $white;
+        border: 3px solid $gray-300;
+        font-weight: $font-weight-bold;
+        line-height: 1;
+    }
+
+    .feita .marcador {
+        background-color: $primary;
+        border-color: $primary;
+        color: $white;
+    }
+
+    .atual {
+        color: $body-color;
+        font-weight: $font-weight-bold;
+
+        .marcador {
+            border-color: $primary;
+            box-shadow: 0 0 0 .25rem rgba($primary, .2);
+        }
+    }
+
+    .parada .marcador {
+        border-color: $danger;
+        background-color: $danger;
+        color: $white;
+    }
+
+    @include media-breakpoint-down(sm) {
+        .rotulo {
+            display: none;
+        }
+
+        .atual .rotulo {
+            display: block;
+        }
+    }
+}
+
+// Linha do tempo da demanda (RF08)
+.linha-do-tempo {
+    list-style: none;
+    padding: 0 0 0 1.25rem;
+    margin: 0;
+    border-left: 2px solid $gray-300;
+
+    li {
+        position: relative;
+        padding-bottom: .75rem;
+
+        &:last-child {
+            padding-bottom: 0;
+        }
+    }
+
+    .ponto {
+        position: absolute;
+        left: calc(-1.25rem - 6px);
+        top: .3rem;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+    }
+}
+
+// Chat da demanda (RF08)
+.chat-demanda {
+    max-height: 28rem;
+    overflow-y: auto;
+
+    .balao {
+        max-width: 85%;
+        overflow-wrap: anywhere;
+    }
+
+    .texto {
+        white-space: pre-line;
+    }
+}
