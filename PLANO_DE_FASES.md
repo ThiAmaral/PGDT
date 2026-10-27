@@ -376,9 +376,12 @@ Itens do TCC que não estão no documento de RF, mas que agregam valor. O autor 
 ## Fase 8 — Testes, validação com usuários e implantação 🟨
 
 ### Escolhas do autor (2026-10-27)
-- As melhorias que o autor quer fazer ficam para uma **Fase 9**, depois do sistema implantado.
+- As melhorias que o autor quer fazer ficam para uma **Fase 9**, depois do sistema implantado. **Revisto em 2026-10-27:** a Fase 9 entra antes da retomada da Fase 8, para os testes com usuários e o deploy já usarem o sistema melhorado.
 - O ambiente de produção ainda não está definido e fica para o fim da fase, por escolha do autor: levantar as opções (servidor da UFES, hospedagem compartilhada, VPS/nuvem) com prós, contras e custos para o autor decidir.
 - Testes com usuários: **roteiro de tarefas por perfil**; o autor coleta os comentários livremente.
+
+### Situação (2026-10-27): pausada para a Fase 9
+Prontos: revisão de segurança, responsividade, dados de demonstração e roteiro de testes com usuários. Ao retomar, faltam: a revisão do aviso de privacidade pelo autor (com os dados da UFES), os testes com usuários, as correções a partir do feedback e, por último, a hospedagem e o deploy. Antes dos testes, conferir o roteiro e os dados de demonstração contra as mudanças da Fase 9. A Fase 9 começa a partir da branch `feature/fase8-testes-implantacao`, e as duas são juntadas na `main` quando a Fase 8 terminar.
 
 ### Ordem de trabalho
 1. Revisão de segurança e das permissões, com testes automáticos para o que faltar. ✅ (falta a revisão do aviso de privacidade pelo autor)
@@ -448,7 +451,9 @@ Revisados as rotas, os middlewares, as policies, todos os controllers, os upload
 
 ## Fase 9 — Melhorias do sistema ⬜
 
-Melhorias pedidas pelo autor depois da implantação. Itens a definir.
+Melhorias pedidas pelo autor, feitas antes da retomada da Fase 8 (decisão de 2026-10-27). Itens a definir.
+
+- Sugestão anotada na Fase 8: no celular, mostrar a lista de usuários e o relatório em cartões.
 
 ---
 
@@ -494,6 +499,7 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-21 | RF13: a etapa "Homologação" passa a se chamar **Aceite** ("Aceitar Solução"); o admin e o coordenador também podem registrar o aceite ou a pendência em nome do demandante, com indicação na linha do tempo. | Pedido do autor: os projetos de extensão não são só de programação, e a demanda não deve travar quando o demandante confirma por outro meio. |
 | 2026-10-27 | Revisão das decisões da Fase 6 pelo autor: (a) várias entregas ao mesmo tempo, numeradas na ordem de envio; (b) o coordenador e o admin podem enviar entregas em nome da equipe; (g) planilhas do Excel aceitas nos arquivos e no relatório técnico; (h) o período do relatório conta só os sub-projetos que começaram e terminaram entre as datas; (c), (d), (e), (f) e (i) aprovadas como estavam. | Pedido do autor. |
 | 2026-10-27 | Decisões de implementação da Fase 7 (aprovadas pelo autor): (a) e-mails de cadastro, convite e senha sempre ligados, o parâmetro desliga só os avisos novos; (b) um e-mail por mensagem do chat; (c) admins só recebem avisos das demandas sem coordenador; (d) avisos extras de nova demanda, nova candidatura, entrega enviada, aprovação técnica e aceite; (e) avisos pela fila do banco; (f) tempo médio de atendimento só com demandas concluídas e período pela data de abertura; (g) sem PDF nem gráfico por mês no dashboard; (h) menu "Configurações" do admin. | Pedido do autor (Fase 7). |
+| 2026-10-27 | A Fase 9 (melhorias) entra antes da retomada da Fase 8: a Fase 8 fica pausada depois do roteiro de testes, e os testes com usuários e o deploy usam o sistema já melhorado. | Pedido do autor. |
 
 ## Registro de progresso
 
@@ -539,3 +545,4 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-27 | 8 | Testes de responsividade: 35 telas medidas em celular, tablet e computador. Corrigido o menu do admin, que ficava mais largo que a tela no tablet. Telas dos outros perfis ficam para a conferência com os dados de demonstração. O aviso de privacidade continua como rascunho, aguardando a revisão do autor. |
 | 2026-10-27 | 8 | Dados de demonstração: `DemonstracaoSeeder` com 11 demandas (uma em cada etapa), 14 contas fictícias e passo a passo em `docs/INSTALACAO.md`. Carregado no banco separado `pgdt_demo`; telas de estudante, demandante e coordenador conferidas no celular, tablet e computador. 201 testes passando. |
 | 2026-10-27 | 8 | Roteiro de testes com usuários criado (Claude Docs), com tarefas por perfil, perguntas finais e ficha de registro; tarefas conferidas por um teste automático com os dados de demonstração. 202 testes passando. Aguarda a aplicação dos testes pelo autor. |
+| 2026-10-27 | 8 | Fase 8 pausada a pedido do autor para a Fase 9 entrar antes. Feitos: segurança, responsividade, dados de demonstração e roteiro. Faltam: aviso de privacidade, testes com usuários, correções e deploy. |
