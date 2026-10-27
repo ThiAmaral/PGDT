@@ -377,16 +377,15 @@ Itens do TCC que não estão no documento de RF, mas que agregam valor. O autor 
 
 ### Escolhas do autor (2026-10-27)
 - As melhorias que o autor quer fazer ficam para uma **Fase 9**, depois do sistema implantado.
-- O ambiente de produção ainda não está definido: levantar as opções (servidor da UFES, hospedagem compartilhada, VPS/nuvem) com prós, contras e custos para o autor decidir.
+- O ambiente de produção ainda não está definido e fica para o fim da fase, por escolha do autor: levantar as opções (servidor da UFES, hospedagem compartilhada, VPS/nuvem) com prós, contras e custos para o autor decidir.
 - Testes com usuários: **roteiro de tarefas por perfil**; o autor coleta os comentários livremente.
 
 ### Ordem de trabalho
 1. Revisão de segurança e das permissões, com testes automáticos para o que faltar.
 2. Testes de responsividade (celular, tablet, desktop).
 3. Dados de demonstração (seeder separado, fora do `DatabaseSeeder`).
-4. Levantamento das opções de produção → decisão do autor → guia de deploy (inclui `queue:work`/cron e HTTPS).
-5. Deploy.
-6. Roteiro de testes por perfil → testes com usuários → correções.
+4. Roteiro de testes por perfil → testes com usuários (no ambiente local) → correções.
+5. Por último: levantamento das opções de produção → decisão do autor → guia de deploy (inclui `queue:work`/cron e HTTPS) → deploy.
 
 
 - [ ] Testes automatizados (Feature tests do Laravel) para os fluxos principais e as permissões.
@@ -488,3 +487,4 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-27 | 7 | Autor aprovou as decisões de implementação (a)–(h). Falta a conferência no navegador com login para concluir a fase. |
 | 2026-10-27 | 7 | Autor conferiu as telas no navegador e aprovou a Fase 7. **Fase 7 concluída**: branch `feature/fase7-complementos` juntada na `main` e enviada ao GitHub. |
 | 2026-10-27 | 8 | Fase 8 iniciada na branch `feature/fase8-testes-implantacao`. Autor decidiu: melhorias numa Fase 9 depois da implantação; produção a definir a partir de um levantamento de opções; testes com usuários por roteiro de tarefas. 187 testes passando no início da fase. |
+| 2026-10-27 | 8 | A pedido do autor, a hospedagem e o deploy passaram para o último passo da fase; os testes com usuários serão feitos no ambiente local. |
