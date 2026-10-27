@@ -70,6 +70,8 @@ class SolicitacaoPolicy
             if ($status === StatusDemanda::Priorizada && $solicitacao->subprojeto()->exists()) {
                 array_unshift($disponiveis, StatusDemanda::EmDesenvolvimento);
             }
+
+            $disponiveis = [...$disponiveis, ...$this->proximosDaExecucao($solicitacao)];
         }
 
         $podeCancelar = match (true) {
@@ -84,6 +86,39 @@ class SolicitacaoPolicy
         }
 
         return $disponiveis;
+    }
+
+    /**
+     * RF13: "Em Validação" só com uma entrega enviada e "Concluída" só com a solução aceita.
+     * O status sugerido pela última entrega vem primeiro na lista.
+     *
+     * @return list<StatusDemanda>
+     */
+    private function proximosDaExecucao(Solicitacao $solicitacao): array
+    {
+        $subprojeto = $solicitacao->subprojeto;
+
+        if ($subprojeto === null) {
+            return [];
+        }
+
+        $temEntrega = $subprojeto->entregas()->exists();
+        $aceita = $subprojeto->temEntregaAceita();
+
+        $proximos = array_values(array_filter(
+            $solicitacao->status->proximosDaExecucao(),
+            fn (StatusDemanda $proximo) => match ($proximo) {
+                StatusDemanda::EmValidacao => $temEntrega,
+                StatusDemanda::Concluida => $aceita,
+                default => true,
+            },
+        ));
+
+        $sugerido = $solicitacao->statusSugerido();
+
+        usort($proximos, fn (StatusDemanda $a, StatusDemanda $b) => ($b === $sugerido) <=> ($a === $sugerido));
+
+        return $proximos;
     }
 
     /**

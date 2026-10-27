@@ -7,6 +7,7 @@ use App\Enums\Perfil;
 use App\Enums\StatusDemanda;
 use App\Models\Anexo;
 use App\Models\CategoriaDemanda;
+use App\Models\Entrega;
 use App\Models\Prioridade;
 use App\Models\ProjetoBase;
 use App\Models\Solicitacao;
@@ -175,6 +176,9 @@ class SolicitacaoController extends Controller
             'prioridades' => $prioridades,
             'complexidades' => Complexidade::cases(),
             'statusDisponiveis' => app(SolicitacaoPolicy::class)->statusDisponiveis($request->user(), $solicitacao),
+            // RF13: sugestão de status pelas entregas e as entregas que o usuário vê (o demandante, só depois da aprovação técnica).
+            'statusSugerido' => $solicitacao->statusSugerido(),
+            'entregas' => $solicitacao->subprojeto?->entregas()->get()->filter(fn (Entrega $entrega) => Gate::allows('view', $entrega))->values() ?? collect(),
         ]);
     }
 

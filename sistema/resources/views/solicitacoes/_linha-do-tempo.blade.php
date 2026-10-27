@@ -21,6 +21,8 @@
                         </ul>
                     @elseif (isset($historico->dados['motivo']))
                         <div class="small">Motivo: {{ $historico->dados['motivo'] }}</div>
+                    @elseif (isset($historico->dados['feedback']))
+                        <div class="small" style="white-space: pre-line">Comentário: {{ $historico->dados['feedback'] }}</div>
                     @endif
 
                     <div class="small text-muted">

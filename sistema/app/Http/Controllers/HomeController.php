@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Perfil;
+use App\Enums\SituacaoEntrega;
 use App\Enums\StatusDemanda;
 use App\Enums\StatusUsuario;
+use App\Models\Entrega;
 use App\Models\ProjetoBase;
 use App\Models\Solicitacao;
 use App\Models\Subprojeto;
@@ -36,6 +38,19 @@ class HomeController extends Controller
             // RF11: candidaturas aguardando avaliação nos sub-projetos que o usuário gerencia.
             'totalCandidaturasPendentes' => $usuario->temPerfil(Perfil::Admin, Perfil::Coordenador)
                 ? Subprojeto::candidaturasPendentesPara($usuario)
+                : 0,
+            // RF13: entregas aguardando a validação técnica (admin e coordenador) ou o aceite (demandante).
+            'totalEntregasParaValidar' => $usuario->temPerfil(Perfil::Admin, Perfil::Coordenador)
+                ? Entrega::query()
+                    ->where('situacao', SituacaoEntrega::AguardandoTecnica)
+                    ->whereHas('subprojeto', fn ($query) => $query->visiveisPara($usuario))
+                    ->count()
+                : 0,
+            'totalEntregasParaAceitar' => $usuario->temPerfil(Perfil::Demandante)
+                ? Entrega::query()
+                    ->where('situacao', SituacaoEntrega::AguardandoAceite)
+                    ->whereHas('subprojeto.solicitacao', fn ($query) => $query->where('demandante_id', $usuario->id))
+                    ->count()
                 : 0,
             // RF10: vagas abertas e equipes do estudante.
             'totalOportunidades' => $usuario->temPerfil(Perfil::Estudante)

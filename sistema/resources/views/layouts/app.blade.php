@@ -53,6 +53,9 @@
                                             <a class="nav-link @if (request()->routeIs('projetos-base.*')) active @endif" href="{{ route('projetos-base.index') }}">Projetos Base</a>
                                         </li>
                                         <li class="nav-item">
+                                            <a class="nav-link @if (request()->routeIs('relatorios.*')) active @endif" href="{{ route('relatorios.extensionistas') }}">Relatório</a>
+                                        </li>
+                                        <li class="nav-item">
                                             <a class="nav-link @if (request()->routeIs('admin.dominios.*')) active @endif" href="{{ route('admin.dominios.index', 'tipologias') }}">Cadastros de apoio</a>
                                         </li>
                                         @break
@@ -65,6 +68,9 @@
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link @if (request()->routeIs('projetos-base.*')) active @endif" href="{{ route('projetos-base.index') }}">Projetos Base</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link @if (request()->routeIs('relatorios.*')) active @endif" href="{{ route('relatorios.extensionistas') }}">Relatório</a>
                                         </li>
                                         @break
                                     @case(\App\Enums\Perfil::Demandante)
@@ -81,6 +87,9 @@
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link @if (request()->routeIs('subprojetos.*')) active @endif" href="{{ route('subprojetos.index') }}">Meus sub-projetos</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link @if (request()->routeIs('relatorios.*')) active @endif" href="{{ route('relatorios.extensionistas') }}">Meu relatório</a>
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link @if (request()->routeIs('projetos-base.*')) active @endif" href="{{ route('projetos-base.index') }}">Projetos de extensão</a>

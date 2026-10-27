@@ -44,6 +44,9 @@
                             <td>
                                 <a href="{{ route('subprojetos.show', $subprojeto) }}" class="text-body">{{ $subprojeto->titulo }}</a>
                                 <div class="small text-muted">{{ $subprojeto->modalidade->rotulo() }} · {{ $subprojeto->periodo() }}</div>
+                                @if (! $ehEstudante && $subprojeto->entregas_para_validar_count)
+                                    <span class="badge text-bg-warning">{{ $subprojeto->entregas_para_validar_count }} entrega(s) para validar</span>
+                                @endif
                             </td>
                             <td class="d-none d-md-table-cell small">{{ $subprojeto->solicitacao->projetoBase->titulo }}</td>
                             <td>

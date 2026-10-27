@@ -40,6 +40,15 @@
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 shadow-sm">
                         <div class="card-body">
+                            <h2 class="h5">Entregas para validar</h2>
+                            <p class="display-6 mb-2">{{ $totalEntregasParaValidar }}</p>
+                            <a href="{{ route('subprojetos.index') }}" class="btn btn-primary btn-sm">Abrir sub-projetos</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
                             <h2 class="h5">Usuários</h2>
                             <p class="text-muted">Aprovar, alterar status e trocar o perfil dos usuários.</p>
                             <a href="{{ route('admin.usuarios.index') }}" class="btn btn-outline-primary btn-sm">Abrir usuários</a>
@@ -101,6 +110,16 @@
                 <div class="col-md-6">
                     <div class="card h-100 shadow-sm">
                         <div class="card-body">
+                            <h2 class="h5">Entregas para validar</h2>
+                            <p class="display-6 mb-2">{{ $totalEntregasParaValidar }}</p>
+                            <p class="text-muted">Entregas das equipes aguardando a aprovação técnica.</p>
+                            <a href="{{ route('subprojetos.index') }}" class="btn btn-primary btn-sm">Abrir sub-projetos</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
                             <h2 class="h5">Seus projetos de extensão</h2>
                             <p class="display-6 mb-2">{{ $totalMeusProjetos }}</p>
                             <p class="text-muted">Projetos Base que recebem as demandas das escolas.</p>
@@ -122,6 +141,12 @@
                         </div>
                         <a href="{{ route('demandas.create') }}" class="btn btn-primary btn-sm">Nova demanda</a>
                     </div>
+
+                    @if ($totalEntregasParaAceitar > 0)
+                        <div class="alert alert-primary small py-2">
+                            {{ $totalEntregasParaAceitar === 1 ? 'Uma entrega aprovada pela coordenação aguarda' : "{$totalEntregasParaAceitar} entregas aprovadas pela coordenação aguardam" }} o seu aceite. Abra a demanda para conferir.
+                        </div>
+                    @endif
 
                     @forelse ($minhasDemandas as $demanda)
                         <a href="{{ route('demandas.show', $demanda) }}" class="d-flex justify-content-between align-items-center gap-2 border-top py-2 text-body text-decoration-none">
@@ -164,6 +189,7 @@
                                 <p class="text-muted">Você ainda não faz parte de nenhuma equipe. Candidate-se a um sub-projeto em "Oportunidades".</p>
                             @endforelse
                             <a href="{{ route('subprojetos.index') }}" class="btn btn-outline-primary btn-sm mt-2">Meus sub-projetos e candidaturas</a>
+                            <a href="{{ route('relatorios.extensionistas') }}" class="btn btn-outline-primary btn-sm mt-2">Meu relatório de horas</a>
                         </div>
                     </div>
                 </div>

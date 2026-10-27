@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\Complexidade;
 use App\Enums\Perfil;
+use App\Enums\SituacaoEntrega;
 use App\Enums\StatusDemanda;
 use App\Enums\TipoHistorico;
 use App\Observers\SolicitacaoObserver;
@@ -181,6 +182,26 @@ class Solicitacao extends Model
             ->orderBy('prioridades.ordem')
             ->orderBy('solicitacoes.created_at')
             ->orderBy('solicitacoes.id');
+    }
+
+    /**
+     * Próximo status sugerido pelas entregas (RF13). A mudança continua manual (decisão da Fase 0).
+     * Ajustes pedidos na entrega mais recente vêm primeiro; depois, entregas em avaliação;
+     * com tudo avaliado e alguma entrega aceita, a sugestão é concluir.
+     */
+    public function statusSugerido(): ?StatusDemanda
+    {
+        $situacoes = $this->subprojeto?->entregas()->pluck('situacao') ?? collect();
+
+        $sugerido = match (true) {
+            $situacoes->isEmpty() => null,
+            $situacoes->last()->pedeAjustes() => StatusDemanda::AguardandoAjustes,
+            $situacoes->contains(fn (SituacaoEntrega $situacao) => $situacao->emAvaliacao()) => StatusDemanda::EmValidacao,
+            $situacoes->contains(SituacaoEntrega::Aceita) => StatusDemanda::Concluida,
+            default => null,
+        };
+
+        return $sugerido === $this->status ? null : $sugerido;
     }
 
     public function foiTriada(): bool

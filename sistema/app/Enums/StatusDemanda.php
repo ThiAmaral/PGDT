@@ -74,8 +74,8 @@ enum StatusDemanda: string
     }
 
     /**
-     * Próximos status que o coordenador e o admin podem aplicar nesta fase (RF07).
-     * Os status de execução e validação entram nas Fases 5 e 6.
+     * Próximos status da triagem que o coordenador e o admin podem aplicar (RF07).
+     * "Em Desenvolvimento" depende do sub-projeto (RF09) e os seguintes, das entregas (RF13).
      *
      * @return list<self>
      */
@@ -88,6 +88,30 @@ enum StatusDemanda: string
             self::Recusada => [self::EmAnalise],
             default => [],
         };
+    }
+
+    /**
+     * Próximos status da execução e da validação (RF13). A policy só oferece "Em Validação"
+     * com uma entrega enviada e "Concluída" com a solução aceita.
+     *
+     * @return list<self>
+     */
+    public function proximosDaExecucao(): array
+    {
+        return match ($this) {
+            self::EmDesenvolvimento => [self::EmValidacao, self::Concluida],
+            self::EmValidacao => [self::AguardandoAjustes, self::Concluida],
+            self::AguardandoAjustes => [self::EmDesenvolvimento, self::EmValidacao, self::Concluida],
+            default => [],
+        };
+    }
+
+    /**
+     * Status em que a equipe envia entregas (RF12).
+     */
+    public function permiteEntrega(): bool
+    {
+        return in_array($this, [self::EmDesenvolvimento, self::EmValidacao, self::AguardandoAjustes], true);
     }
 
     /**

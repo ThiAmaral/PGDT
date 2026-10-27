@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -62,6 +63,16 @@ class Usuario extends Authenticatable implements MustVerifyEmail
     public function coordenador(): HasOne
     {
         return $this->hasOne(Coordenador::class, 'usuario_id');
+    }
+
+    /**
+     * Equipes de sub-projetos de que o estudante participa ou participou (RF11 e RF15).
+     *
+     * @return HasMany<MembroEquipe, $this>
+     */
+    public function participacoes(): HasMany
+    {
+        return $this->hasMany(MembroEquipe::class, 'estudante_id');
     }
 
     /**
