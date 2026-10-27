@@ -26,7 +26,7 @@ Base: TCC1 de Paulo Henrique Bressanini Rizzi e o documento "Funcionalidades do 
 | 4 | Rastreabilidade e comunicação | RF08 | ✅ |
 | 5 | Sub-projetos, vitrine pública e equipe | RF09, RF10, RF11, RF14 | ✅ |
 | 6 | Entregas, validação e relatório | RF12, RF13, RF15 | ✅ |
-| 7 | Complementos (dashboard, notificações, parâmetros) | antigos RF04/RF22/RF23 do TCC | 🟨 |
+| 7 | Complementos (dashboard, notificações, parâmetros) | antigos RF04/RF22/RF23 do TCC | ✅ |
 | 8 | Testes, validação com usuários e implantação | RNF01–RNF05 | ⬜ |
 
 Cada fase termina com algo **utilizável e demonstrável**. Uma fase só começa depois que o critério de conclusão da anterior for atingido.
@@ -334,7 +334,7 @@ Regras para evitar erro do usuário:
 
 ---
 
-## Fase 7 — Complementos 🟨
+## Fase 7 — Complementos ✅
 
 Itens do TCC que não estão no documento de RF, mas que agregam valor. O autor escolheu em 2026-10-27 os itens 1, 2 e 4; o log de auditoria fica como trabalho futuro.
 
@@ -465,3 +465,4 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-27 | 7 | Fase 7 iniciada na branch `feature/fase7-complementos`. O autor escolheu o dashboard gerencial, as notificações por e-mail e os parâmetros gerais; o log de auditoria fica como trabalho futuro. |
 | 2026-10-27 | 7 | Entregáveis da Fase 7 implementados: parâmetros gerais, avisos por e-mail pela fila e dashboard gerencial. 187 testes passando; migration rodada no MySQL local. Falta a conferência no navegador com login e a aprovação das decisões (a)–(h) pelo autor. |
 | 2026-10-27 | 7 | Autor aprovou as decisões de implementação (a)–(h). Falta a conferência no navegador com login para concluir a fase. |
+| 2026-10-27 | 7 | Autor conferiu as telas no navegador e aprovou a Fase 7. **Fase 7 concluída**: branch `feature/fase7-complementos` juntada na `main`. |
