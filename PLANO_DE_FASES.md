@@ -25,7 +25,7 @@ Base: TCC1 de Paulo Henrique Bressanini Rizzi e o documento "Funcionalidades do 
 | 3 | Demandas: abertura e triagem | RF06, RF07 | ✅ |
 | 4 | Rastreabilidade e comunicação | RF08 | ✅ |
 | 5 | Sub-projetos, vitrine pública e equipe | RF09, RF10, RF11, RF14 | ✅ |
-| 6 | Entregas, validação e relatório | RF12, RF13, RF15 | 🟨 |
+| 6 | Entregas, validação e relatório | RF12, RF13, RF15 | ✅ |
 | 7 | Complementos (dashboard, notificações, auditoria) | antigos RF04/RF22/RF23 do TCC | ⬜ |
 | 8 | Testes, validação com usuários e implantação | RNF01–RNF05 | ⬜ |
 
@@ -291,7 +291,7 @@ Regras para evitar erro do usuário:
 
 ---
 
-## Fase 6 — Entregas, validação e relatório 🟨
+## Fase 6 — Entregas, validação e relatório ✅
 
 **RFs:** RF12 Submissão de Entregas · RF13 Validação e Aceite (antes "Homologação") · RF15 Relatório de Demandas por Extensionista
 
@@ -435,3 +435,4 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-27 | 6 | Autor concluiu a conferência no navegador: entrega → aprovação técnica → aceite (registrado pelo admin em nome do demandante) → "Concluída" → relatório. Critério de conclusão atingido. Aguarda a aprovação das decisões (a)–(i) e do pacote `barryvdh/laravel-dompdf` para juntar na `main`. |
 | 2026-10-27 | 6 | Autor revisou as decisões (a)–(i). Implementado: entregas numeradas e simultâneas (migration `2026_10_27_000001_add_numero_to_entregas_table`, que numerou a entrega de teste como nº 1), envio pela coordenação em nome da equipe, Excel nos arquivos e período estrito no relatório. 164 testes passando. |
 | 2026-10-27 | 6 | A pedido do autor, o relatório técnico também aceita planilhas do Excel (XLSX e XLS). 165 testes passando. |
+| 2026-10-27 | 6 | Autor aprovou a Fase 6, as decisões de implementação (a)–(i) revisadas e o pacote `barryvdh/laravel-dompdf`. **Fase 6 concluída**: branch `feature/fase6-entregas` juntada na `main` e enviada ao GitHub. |
