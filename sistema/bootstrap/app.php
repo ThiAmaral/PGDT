@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\CabecalhosSeguranca;
 use App\Http\Middleware\ContaAtiva;
 use App\Http\Middleware\VerificaPerfil;
 use Illuminate\Foundation\Application;
@@ -18,6 +19,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'perfil' => VerificaPerfil::class,
             'ativo' => ContaAtiva::class,
         ]);
+
+        $middleware->append(CabecalhosSeguranca::class);
 
         $middleware->redirectUsersTo('/painel');
     })

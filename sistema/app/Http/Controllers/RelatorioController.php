@@ -44,7 +44,8 @@ class RelatorioController extends Controller
         $pdf = Pdf::loadView('relatorios.extensionistas-pdf', [
             'filtros' => $filtros,
             'porEstudante' => $this->agruparPorEstudante($participacoes),
-            'projeto' => isset($filtros['projeto']) ? ProjetoBase::find($filtros['projeto']) : null,
+            // O título do projeto só aparece se ele estiver entre os que o usuário vê.
+            'projeto' => isset($filtros['projeto']) ? $this->projetosVisiveis($request->user())->firstWhere('id', $filtros['projeto']) : null,
             'geradoPor' => $request->user(),
         ])->setPaper('a4', 'landscape');
 

@@ -31,15 +31,16 @@ Route::get('/projetos/{projetoBase}', [ProjetoPublicoController::class, 'show'])
 Auth::routes(['register' => false, 'verify' => true]);
 
 // RF01 e RF02: autocadastro separado por perfil; coordenador só por convite.
+// Até 10 envios por minuto, para conter cadastros em massa (Fase 8).
 Route::middleware('guest')->group(function () {
     Route::get('/cadastro', [CadastroController::class, 'escolha'])->name('register');
     Route::get('/cadastro/estudante', [CadastroController::class, 'criarEstudante'])->name('cadastro.estudante');
-    Route::post('/cadastro/estudante', [CadastroController::class, 'salvarEstudante']);
+    Route::post('/cadastro/estudante', [CadastroController::class, 'salvarEstudante'])->middleware('throttle:10,1');
     Route::get('/cadastro/demandante', [CadastroController::class, 'criarDemandante'])->name('cadastro.demandante');
-    Route::post('/cadastro/demandante', [CadastroController::class, 'salvarDemandante']);
+    Route::post('/cadastro/demandante', [CadastroController::class, 'salvarDemandante'])->middleware('throttle:10,1');
 
     Route::get('/convite/{token}', [ConviteController::class, 'criar'])->name('convite.aceitar');
-    Route::post('/convite/{token}', [ConviteController::class, 'salvar']);
+    Route::post('/convite/{token}', [ConviteController::class, 'salvar'])->middleware('throttle:10,1');
 });
 
 Route::redirect('/register', '/cadastro');

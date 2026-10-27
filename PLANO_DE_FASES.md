@@ -396,6 +396,28 @@ Itens do TCC que não estão no documento de RF, mas que agregam valor. O autor 
 - [ ] Correções a partir do feedback.
 - [ ] Definir o ambiente de produção e fazer o deploy.
 
+### Revisão de segurança (2026-10-27)
+Revisados as rotas, os middlewares, as policies, todos os controllers, os uploads e downloads, as notificações e as telas.
+
+**Já estava correto:**
+- CSRF: todos os formulários que enviam dados têm `@csrf`; nenhuma tela usa `{!! !!}` (todo texto é escapado).
+- Senhas: guardadas com hash (bcrypt, 12 rodadas), mínimo de 8 caracteres com letras e números; login com bloqueio depois de 5 tentativas erradas; convite com token guardado só como hash, de uso único e com prazo.
+- Autorização: toda rota interna exige login, e-mail confirmado e conta ativa; a área do admin exige o perfil; demandas, sub-projetos, entregas, anexos e arquivos passam pelas policies, e os parâmetros aninhados nas rotas são conferidos (um anexo só abre pela demanda dele).
+- Uploads: o tipo é conferido pelo conteúdo do arquivo, não só pela extensão; os arquivos ficam fora da pasta pública e só saem pelo download autorizado; tamanho e quantidade limitados pelos parâmetros.
+- Dados gravados só a partir de campos validados; o perfil e o status não podem ser alterados pelo próprio usuário.
+- LGPD: a página pública e a vitrine não mostram e-mail, telefone ou matrícula; o estudante da equipe não vê os contatos do demandante.
+
+**Corrigido nesta revisão:**
+- Cadastro de estudante, de demandante e aceite de convite: até 10 envios por minuto, para conter cadastros em massa.
+- Cabeçalhos de segurança em todas as respostas (middleware `CabecalhosSeguranca`): bloqueia a abertura das telas dentro de outro site, impede o navegador de adivinhar o tipo dos arquivos e, em HTTPS, obriga o uso de HTTPS.
+- Avisos por e-mail: o texto digitado pelos usuários (chat, títulos, motivos, nomes) deixou de virar link ou formatação no e-mail, o que permitia montar um link falso dentro de um aviso oficial.
+- PDF do relatório: o título do Projeto Base só aparece se o projeto estiver entre os que o usuário vê.
+- Testes novos em `SegurancaTest` (8): todas as rotas internas mandam o visitante para o login; todas as rotas do admin dão 403 para coordenador, demandante e estudante; dashboard fechado para demandante e estudante; cabeçalhos; limite do cadastro; arquivo PHP renomeado para `.pdf` recusado; texto do chat sem link no e-mail; PDF sem projeto de outro coordenador. 195 testes no total, todos passando.
+
+**Pendente:**
+- LGPD: o sistema não tem aviso de privacidade nos cadastros (quais dados são coletados, para quê, quem é o responsável e como pedir a exclusão). O texto depende do autor e da UFES.
+- Checklist de produção, para o guia de deploy: `APP_ENV=production`, `APP_DEBUG=false`, `LOG_LEVEL=warning`, HTTPS com `SESSION_SECURE_COOKIE=true`, a raiz do site apontando para `sistema/public`, senha do admin inicial trocada, `php artisan config:cache` e `route:cache`, `queue:work` sempre rodando e backup do banco e da pasta `storage/app`.
+
 **Critério de conclusão:** sistema implantado e validado com usuários; resultados documentados.
 
 ---
@@ -488,3 +510,4 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-27 | 7 | Autor conferiu as telas no navegador e aprovou a Fase 7. **Fase 7 concluída**: branch `feature/fase7-complementos` juntada na `main` e enviada ao GitHub. |
 | 2026-10-27 | 8 | Fase 8 iniciada na branch `feature/fase8-testes-implantacao`. Autor decidiu: melhorias numa Fase 9 depois da implantação; produção a definir a partir de um levantamento de opções; testes com usuários por roteiro de tarefas. 187 testes passando no início da fase. |
 | 2026-10-27 | 8 | A pedido do autor, a hospedagem e o deploy passaram para o último passo da fase; os testes com usuários serão feitos no ambiente local. |
+| 2026-10-27 | 8 | Revisão de segurança concluída: limite de envios nos cadastros, cabeçalhos de segurança, texto dos usuários sem Markdown nos e-mails e título do projeto no PDF restrito. 8 testes novos (`SegurancaTest`); 195 no total, todos passando. Pendentes: aviso de privacidade (LGPD) e checklist de produção para o deploy. |

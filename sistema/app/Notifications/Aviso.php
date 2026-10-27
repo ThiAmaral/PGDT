@@ -67,20 +67,32 @@ class Aviso extends Notificacao implements ShouldQueue
     {
         $mensagem = (new MailMessage)
             ->subject($this->assunto)
-            ->greeting("Olá, {$notifiable->nome}!");
+            ->greeting('Olá, '.self::semMarkdown($notifiable->nome).'!');
 
         foreach ($this->linhas as $linha) {
-            $mensagem->line($linha);
+            $mensagem->line(self::semMarkdown($linha));
         }
 
         $mensagem->action($this->botao, $this->url);
 
         if ($contato = Parametro::valor('email_contato')) {
-            $mensagem->line("Dúvidas: {$contato}.");
+            $mensagem->line('Dúvidas: '.self::semMarkdown($contato).'.');
         }
 
         return $mensagem
             ->line('Você recebe este aviso porque participa desta demanda na '.config('app.name').'.')
-            ->salutation(Parametro::valor('nome_rede'));
+            ->salutation(self::semMarkdown((string) Parametro::valor('nome_rede')));
+    }
+
+    /**
+     * O e-mail é montado em Markdown: o texto digitado pelos usuários (chat, títulos, motivos)
+     * sai como texto, sem virar link, imagem ou formatação. O HTML já é escapado pelo Laravel.
+     */
+    public static function semMarkdown(string $texto): string
+    {
+        $texto = preg_replace('/[\\\\`*_\[\]()#!|~]/', '\\\\$0', $texto);
+
+        // Número, hífen ou sinal de mais no começo da linha viraria lista.
+        return preg_replace('/^(\d+)([.)])|^([-+])/', '$1\\\\$2$3', $texto);
     }
 }
