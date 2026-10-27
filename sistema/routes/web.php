@@ -6,12 +6,14 @@ use App\Http\Controllers\Admin\UsuarioController;
 use App\Http\Controllers\Cadastro\CadastroController;
 use App\Http\Controllers\Cadastro\ConviteController;
 use App\Http\Controllers\CandidaturaController;
+use App\Http\Controllers\EntregaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MembroEquipeController;
 use App\Http\Controllers\MensagemController;
 use App\Http\Controllers\OportunidadeController;
 use App\Http\Controllers\ProjetoBaseController;
 use App\Http\Controllers\ProjetoPublicoController;
+use App\Http\Controllers\RelatorioController;
 use App\Http\Controllers\SolicitacaoController;
 use App\Http\Controllers\SubprojetoController;
 use Illuminate\Support\Facades\Auth;
@@ -106,5 +108,17 @@ Route::middleware(['auth', 'verified', 'ativo'])->group(function () {
         Route::patch('/candidaturas/{candidatura}/recusar', [CandidaturaController::class, 'recusar'])->name('candidaturas.recusar');
         Route::patch('/membros/{membro}/papel', [MembroEquipeController::class, 'alterarPapel'])->name('membros.papel');
         Route::patch('/membros/{membro}/remover', [MembroEquipeController::class, 'remover'])->name('membros.remover');
+
+        // RF12 e RF13: entregas da equipe e validação em duas etapas. As permissões ficam na EntregaPolicy.
+        Route::get('/entregas/criar', [EntregaController::class, 'create'])->name('entregas.create');
+        Route::post('/entregas', [EntregaController::class, 'store'])->middleware('throttle:10,1')->name('entregas.store');
+        Route::get('/entregas/{entrega}', [EntregaController::class, 'show'])->name('entregas.show');
+        Route::get('/entregas/{entrega}/arquivos/{arquivo}', [EntregaController::class, 'baixarArquivo'])->name('entregas.arquivo');
+        Route::post('/entregas/{entrega}/validacao', [EntregaController::class, 'validar'])->name('entregas.validar');
+        Route::post('/entregas/{entrega}/aceite', [EntregaController::class, 'aceitar'])->name('entregas.aceitar');
     });
+
+    // RF15: relatório de demandas executadas por extensionista.
+    Route::get('/relatorios/extensionistas', [RelatorioController::class, 'extensionistas'])->name('relatorios.extensionistas');
+    Route::get('/relatorios/extensionistas/pdf', [RelatorioController::class, 'extensionistasPdf'])->name('relatorios.extensionistas.pdf');
 });

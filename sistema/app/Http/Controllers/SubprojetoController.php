@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\Modalidade;
 use App\Enums\Perfil;
+use App\Enums\SituacaoEntrega;
 use App\Enums\StatusCandidatura;
 use App\Models\Candidatura;
 use App\Models\PapelEquipe;
@@ -39,6 +40,7 @@ class SubprojetoController extends Controller
             ->withCount([
                 'membrosAtivos',
                 'candidaturas as candidaturas_pendentes_count' => fn ($query) => $query->where('status', StatusCandidatura::Pendente),
+                'entregas as entregas_para_validar_count' => fn ($query) => $query->where('situacao', SituacaoEntrega::AguardandoTecnica),
             ])
             ->visiveisPara($usuario)
             ->latest()
@@ -120,9 +122,25 @@ class SubprojetoController extends Controller
         ])->loadCount('membrosAtivos');
 
         $papeis = PapelEquipe::query()->ativos()->get();
+        $usuario = $request->user();
+
+        // RF12: o demandante só vê as entregas que já passaram pela aprovação técnica.
+        $entregas = $subprojeto->entregas()
+            ->with('remetente')
+            ->when(
+                $subprojeto->solicitacao->demandante_id === $usuario->id && ! Gate::allows('gerencia', $subprojeto->solicitacao),
+                fn ($query) => $query->visiveisAoDemandante(),
+            )
+            ->get();
 
         return view('subprojetos.show', [
             'subprojeto' => $subprojeto,
+            'entregas' => $entregas,
+            'ehMembro' => $usuario->temPerfil(Perfil::Estudante) && $subprojeto->ehMembroAtivo($usuario),
+            // Membros da equipe e, em nome dela, quem gerencia a demanda (decisão (b) da Fase 6).
+            'podeEnviarEntrega' => ($usuario->temPerfil(Perfil::Estudante) && $subprojeto->ehMembroAtivo($usuario))
+                || Gate::allows('gerencia', $subprojeto->solicitacao),
+            'impedimentoDeEntrega' => $subprojeto->impedimentoDeEntrega($usuario),
             'papeis' => $papeis,
             'papelPadrao' => $papeis->firstWhere('nome', PapelEquipe::PADRAO) ?? $papeis->first(),
             'gerencia' => Gate::allows('gerenciarEquipe', $subprojeto),

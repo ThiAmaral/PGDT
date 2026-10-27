@@ -25,7 +25,7 @@ Base: TCC1 de Paulo Henrique Bressanini Rizzi e o documento "Funcionalidades do 
 | 3 | Demandas: abertura e triagem | RF06, RF07 | ✅ |
 | 4 | Rastreabilidade e comunicação | RF08 | ✅ |
 | 5 | Sub-projetos, vitrine pública e equipe | RF09, RF10, RF11, RF14 | ✅ |
-| 6 | Entregas, validação e relatório | RF12, RF13, RF15 | ⬜ |
+| 6 | Entregas, validação e relatório | RF12, RF13, RF15 | ✅ |
 | 7 | Complementos (dashboard, notificações, auditoria) | antigos RF04/RF22/RF23 do TCC | ⬜ |
 | 8 | Testes, validação com usuários e implantação | RNF01–RNF05 | ⬜ |
 
@@ -45,7 +45,7 @@ O autor aprovou todas as propostas abaixo; o ciclo de status foi ajustado para m
   - **Todas as mudanças de status são manuais** (decidido pelo autor em 2026-10-18). O sistema não muda o status sozinho.
   - Coordenador e admin: `Em Análise`, `Priorizada`, `Recusada` (motivo obrigatório), `Em Desenvolvimento`, `Em Validação`, `Aguardando Ajustes` e `Concluída`.
   - `Cancelada`: demandante, só antes de `Em Desenvolvimento`; admin, a qualquer momento.
-  - Ações como criar o sub-projeto, enviar uma entrega ou homologar não mudam o status, mas a tela **sugere** o próximo status ao coordenador (ex.: "Entrega recebida. Mudar para Em Validação?").
+  - Ações como criar o sub-projeto, enviar uma entrega ou aceitar a solução não mudam o status, mas a tela **sugere** o próximo status ao coordenador (ex.: "Entrega recebida. Mudar para Em Validação?").
   - Toda mudança fica no histórico (RF08) com quem mudou e quando.
 - [x] **Usuário pendente (estudante e demandante):** pode fazer login e ver uma tela de "aguardando aprovação" ou fica bloqueado? Recebe e-mail quando é aprovado?
   - *Decisão:* faz login e vê só a tela "Cadastro em análise". Recebe e-mail na aprovação e na rejeição (com o motivo). `Rejeitado` e `Inativo` veem uma mensagem clara ao tentar entrar.
@@ -272,7 +272,7 @@ Regras para evitar erro do usuário:
 - **RF11:** aprovar (escolhendo o papel), recusar, trocar papel e remover membro, com confirmação. A aprovação trava o sub-projeto no banco para duas aprovações simultâneas não passarem das vagas. O admin cadastra novos papéis em "Cadastros de apoio" → "Papéis da equipe".
 - **RF14:** `/projetos` e `/projetos/{id}` sem login, com o link "Projetos e vagas" no menu dos visitantes e na página inicial. "Quero participar" leva ao login (com o aviso "Entre com a sua conta de estudante para concluir a inscrição") e, depois do login, de volta ao sub-projeto. Quem não pode se inscrever vê o botão desabilitado com o motivo.
 - **Painel:** admin e coordenador veem o total de candidaturas pendentes; o estudante vê as vagas abertas e as suas equipes. Menu "Sub-projetos" para admin e coordenador.
-- **Testes:** 34 testes novos (`SubprojetoTest`, `EquipeTest`, `ConsultaPublicaTest`), incluindo o critério de conclusão de ponta a ponta; 127 no total, todos passando.
+- **Testes:** 38 testes novos (`SubprojetoTest`, `EquipeTest`, `ConsultaPublicaTest`), incluindo o critério de conclusão de ponta a ponta; 127 no total, todos passando.
 - **Teste no navegador:** como admin, criei o sub-projeto da demanda de teste (presencial, 2 vagas, 40 h). Como visitante, cliquei em "Quero participar", criei a estudante de teste pelo cadastro, confirmei o e-mail (link no `laravel.log`) e, ainda pendente, vi o botão desabilitado com o motivo. Depois da aprovação pelo admin, entrei, voltei ao sub-projeto e me candidatei com um clique. Como admin, aprovei como Responsável Técnico, corrigi a carga horária para 48 h e conferi as duas ações na linha do tempo. Conferido também no celular. A conta de teste da estudante está anotada no `.env` local.
 - **Ajuste durante o teste:** quando o admin cria o sub-projeto, o responsável passa a ser o coordenador do projeto (a página pública mostraria "Administrador" como coordenação).
 
@@ -291,24 +291,46 @@ Regras para evitar erro do usuário:
 
 ---
 
-## Fase 6 — Entregas, validação e relatório ⬜
+## Fase 6 — Entregas, validação e relatório ✅
 
-**RFs:** RF12 Submissão de Entregas · RF13 Validação e Homologação · RF15 Relatório de Demandas por Extensionista
+**RFs:** RF12 Submissão de Entregas · RF13 Validação e Aceite (antes "Homologação") · RF15 Relatório de Demandas por Extensionista
 
 ### Entregáveis
-- [ ] Tabelas `entregas`, `entrega_arquivos` (até 5 por entrega) e `validacoes` (etapa, decisão, feedback, autor, data).
-- [ ] RF12: formulário com tipo de entrega dinâmico (link/repositório, relatório técnico, arquivos/fotos), validação de formato e tamanho; só membros aprovados enviam.
-- [ ] RF13 etapa 1: coordenador escolhe "Aprovar Tecnicamente" ou "Devolver para Ajustes" (feedback obrigatório).
-- [ ] RF13 etapa 2: demandante escolhe "Homologar Solução" ou "Reportar Pendência".
-- [ ] Depois da homologação, o coordenador ou o admin muda a demanda para `Concluída`; depois de uma devolução ou pendência, muda para `Aguardando Ajustes` e a demanda volta para a equipe. As mudanças são manuais, com sugestão na tela.
-- [ ] Tela de mudança de status (coordenador e admin) com confirmação e registro no histórico.
-- [ ] RF15: relatório de demandas executadas por extensionista. Para cada sub-projeto de que o estudante participou: título, projeto de extensão, escola/instituição, papel do estudante, **data de início**, **data de fim** e **carga horária estimada** do sub-projeto, com o total de horas no final.
+- [x] Tabelas `entregas`, `entrega_arquivos` (até 5 por entrega) e `validacoes` (etapa, decisão, feedback, autor, data).
+- [x] RF12: formulário com tipo de entrega dinâmico (link/repositório, relatório técnico, arquivos/fotos), validação de formato e tamanho; só membros aprovados enviam.
+- [x] RF13 etapa 1: coordenador escolhe "Aprovar Tecnicamente" ou "Devolver para Ajustes" (feedback obrigatório).
+- [x] RF13 etapa 2: demandante escolhe "Aceitar Solução" ou "Reportar Pendência" (o admin e o coordenador também podem registrar a decisão em nome dele).
+  - O nome "homologar" foi trocado por "aceite" (pedido do autor em 2026-10-21), porque os projetos de extensão não são só de programação.
+- [x] Depois do aceite, o coordenador ou o admin muda a demanda para `Concluída`; depois de uma devolução ou pendência, muda para `Aguardando Ajustes` e a demanda volta para a equipe. As mudanças são manuais, com sugestão na tela.
+- [x] Tela de mudança de status (coordenador e admin) com confirmação e registro no histórico.
+- [x] RF15: relatório de demandas executadas por extensionista. Para cada sub-projeto de que o estudante participou: título, projeto de extensão, escola/instituição, papel do estudante, **data de início**, **data de fim** e **carga horária estimada** do sub-projeto, com o total de horas no final.
   - Os valores vêm do sub-projeto (RF09); se o Admin ou o coordenador corrigir a carga horária, o relatório já sai com o valor novo.
   - Filtros: estudante, período, Projeto Base e status (por padrão, só demandas `Concluída`).
   - Exportação em PDF (ex.: `barryvdh/laravel-dompdf`).
   - Acesso: o admin vê todos; o coordenador vê os estudantes dos seus projetos; o estudante vê só o próprio relatório.
 
-**Critério de conclusão:** o ciclo completo funciona de ponta a ponta: demanda → sub-projeto → entrega → aprovação técnica → homologação → concluída; o relatório do estudante mostra esse sub-projeto com datas e carga horária.
+### Como foi implementado (2026-10-21)
+- **Código:** branch `feature/fase6-entregas`. Migration `2026_10_21_000005_create_entregas_tables`; enums `TipoEntrega`, `SituacaoEntrega`, `EtapaValidacao` e `DecisaoValidacao`; models `Entrega`, `EntregaArquivo` e `Validacao`; observers `EntregaObserver` e `ValidacaoObserver`; `EntregaPolicy`; controllers `EntregaController` e `RelatorioController`. Pacote novo: `barryvdh/laravel-dompdf` 3.1 (exportação do RF15).
+- **RF12:** na tela do sub-projeto, o card "Entregas" lista as entregas numeradas e tem o botão "Nova entrega" para os membros da equipe ("Registrar entrega da equipe" para o coordenador e o admin). O formulário (`/subprojetos/{id}/entregas/criar`) muda conforme o tipo: link/repositório (endereço `http`/`https` obrigatório), relatório técnico (PDF, DOCX ou Excel) ou arquivos/fotos (PDF, DOCX, Excel, JPG, PNG ou ZIP), até 5 arquivos de 20 MB, com arrastar e soltar. Os arquivos ficam fora da pasta pública e só são baixados por quem vê a entrega. O formulário mostra os comentários das entregas devolvidas ou com pendência.
+- **RF13:** a tela da entrega mostra o conteúdo, os arquivos e as decisões. O coordenador (ou o admin) escolhe "Aprovar Tecnicamente" ou "Devolver para Ajustes"; depois o demandante escolhe "Aceitar Solução" ou "Reportar Pendência". O admin e o coordenador também veem esses dois botões, para registrar a decisão quando o demandante confirma por outro meio (reunião, telefone, e-mail); nesse caso a linha do tempo mostra "(registrado pela coordenação em nome do demandante)". Devolver e reportar pendência exigem comentário. Cada envio e cada decisão vão para a linha do tempo da demanda, com o comentário.
+- **Status:** a caixa de status passa a oferecer "Em Validação" (com uma entrega enviada), "Aguardando Ajustes", "Em Desenvolvimento" e "Concluída" (só com a solução aceita). A tela sugere o próximo status pela última entrega ("Entrega recebida. Mudar para Em Validação?") e já deixa essa opção escolhida; a mudança continua manual e com confirmação.
+- **RF15:** menu "Relatório" (admin e coordenador) e "Meu relatório" (estudante), em `/relatorios/extensionistas`. Uma seção por estudante com título, projeto de extensão, escola/instituição, papel, início, fim e carga horária estimada de cada sub-projeto, e o total. Filtros de estudante, período (sub-projetos em andamento entre as datas), Projeto Base e status (padrão: "Concluída"). "Exportar PDF" gera o mesmo relatório em A4 paisagem.
+- **Painel:** admin e coordenador veem as entregas para validar; o demandante vê um aviso quando há entrega aguardando o seu aceite; o estudante tem o atalho para o relatório. A lista de sub-projetos marca os que têm entrega para validar.
+- **Testes:** 38 testes novos (`EntregaTest`, `ValidacaoTest`, `RelatorioTest` e `CicloCompletoTest`, que percorre o critério de conclusão de ponta a ponta); 165 no total, todos passando. Migrations `2026_10_21_000005_create_entregas_tables` e `2026_10_27_000001_add_numero_to_entregas_table` rodadas no MySQL local.
+- **Teste no navegador (2026-10-27, feito pelo autor):** a demanda de teste foi para "Em Desenvolvimento"; a estudante enviou a entrega; o admin aprovou tecnicamente e registrou o aceite em nome do demandante; a demanda foi concluída e o relatório da estudante foi conferido. Ajuste durante o teste: as caixas de confirmação do navegador viraram modal do Bootstrap.
+
+### Decisões de implementação (revisadas e aprovadas pelo autor em 2026-10-27)
+- (a) **Várias entregas ao mesmo tempo, numeradas:** cada entrega recebe um número na ordem de envio dentro do sub-projeto (Entrega nº 1, nº 2...) e é avaliada separadamente. A equipe continua enviando enquanto a demanda estiver em execução, mesmo depois de uma entrega aceita. *(Mudou na revisão: antes era uma entrega por vez.)*
+- (b) **Quem envia:** os membros ativos da equipe e, em nome dela, o coordenador ou o admin (ex.: material recebido por e-mail). A linha do tempo indica "(enviada pela coordenação em nome da equipe)". As entregas são aceitas com a demanda em "Em Desenvolvimento", "Em Validação" ou "Aguardando Ajustes". *(Mudou na revisão.)*
+- (c) O demandante só vê a entrega depois da aprovação técnica.
+- (d) O aceite é do demandante; o admin e o coordenador também podem registrar o aceite ou a pendência em nome dele, com indicação na linha do tempo. A validação técnica é do coordenador do projeto, do responsável pelo sub-projeto ou do admin.
+- (e) "Concluída" só com pelo menos uma entrega aceita e "Em Validação" só com uma entrega enviada; os demais status de execução ficam livres. Se ainda houver entregas em avaliação, a tela avisa antes de concluir. O admin continua podendo cancelar a qualquer momento.
+- (f) Coluna `entregas.situacao` com o resultado da última validação; as validações não podem ser editadas nem apagadas.
+- (g) **Tipos de arquivo:** "Arquivos ou fotos" aceita PDF, DOCX, **Excel (XLSX e XLS)**, JPG, PNG e ZIP; o relatório técnico aceita PDF, DOCX ou **Excel (XLSX e XLS)**; o link não guarda arquivos. *(Excel incluído na revisão, nos dois tipos.)*
+- (h) **Relatório:** o filtro de período conta só os sub-projetos que **começaram e terminaram** entre as datas. Membros removidos não aparecem; o coordenador vê os estudantes das equipes dos seus projetos e dos sub-projetos de que é responsável; o demandante não acessa o relatório. *(Período mudou na revisão.)*
+- (i) Sem aviso por e-mail das entregas e decisões nesta fase (fica para a Fase 7).
+
+**Critério de conclusão:** o ciclo completo funciona de ponta a ponta: demanda → sub-projeto → entrega → aprovação técnica → aceite → concluída; o relatório do estudante mostra esse sub-projeto com datas e carga horária.
 
 ---
 
@@ -378,6 +400,8 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-21 | Decisões de implementação da Fase 3 (aprovadas pelo autor junto com a fase): (a) o coordenador vê e classifica só as demandas dos projetos que coordena; as do "Demandas Gerais" sem coordenador ficam com o admin; (b) até 5 anexos por demanda, opcionais; (c) o demandante não edita a demanda depois de enviada (ajustes vão pelo chat da Fase 4); (d) "Priorizada" só depois de categoria, prioridade e complexidade definidas; (e) a triagem pode ser revista até "Priorizada"; (f) uma demanda recusada pode ser reaberta para "Em Análise"; (g) o histórico das mudanças de status (tabela `historicos`) entra na Fase 4; até lá fica gravado só o status atual, o motivo e quem fez a triagem. | Segurança e coerência com as decisões da Fase 0. |
 | 2026-10-21 | Decisões de implementação da Fase 4 (aprovadas pelo autor junto com a fase): (a) mensagens do chat não são editadas nem apagadas; (b) o chat fica só para leitura em "Concluída" e "Cancelada" e continua aberto em "Recusada"; (c) todos os envolvidos veem na linha do tempo quem fez cada ação; (d) `mensagens.perfil` guarda o perfil do autor no envio e `historicos.usuario_id` aceita nulo para mudanças fora de uma sessão de usuário; (e) sem aviso de nova mensagem nesta fase (fica para a Fase 7). | Rastreabilidade e coerência com as decisões da Fase 0. |
 | 2026-10-21 | Decisões de implementação da Fase 5 (aprovadas pelo autor junto com a fase): (a) o sub-projeto só é criado com a demanda "Priorizada", uma vez por demanda, e "Em Desenvolvimento" só aparece depois dele; (b) o responsável é o coordenador que cria (se for o admin, o coordenador do Projeto Base); (c) com a demanda concluída, cancelada ou recusada, só a carga horária pode ser corrigida; (d) a equipe completa tira o sub-projeto da vitrine; (e) quem cancela a candidatura pode se candidatar de novo, quem foi recusado ou removido não; (f) mudanças na equipe vão para a linha do tempo, candidaturas não; (g) o estudante da equipe não vê os contatos do demandante; (h) a página pública não mostra a carga horária e omite projetos ocultos; (i) o formulário avisa que o escopo é público. | Segurança, LGPD e coerência com as decisões da Fase 0. |
+| 2026-10-21 | RF13: a etapa "Homologação" passa a se chamar **Aceite** ("Aceitar Solução"); o admin e o coordenador também podem registrar o aceite ou a pendência em nome do demandante, com indicação na linha do tempo. | Pedido do autor: os projetos de extensão não são só de programação, e a demanda não deve travar quando o demandante confirma por outro meio. |
+| 2026-10-27 | Revisão das decisões da Fase 6 pelo autor: (a) várias entregas ao mesmo tempo, numeradas na ordem de envio; (b) o coordenador e o admin podem enviar entregas em nome da equipe; (g) planilhas do Excel aceitas nos arquivos e no relatório técnico; (h) o período do relatório conta só os sub-projetos que começaram e terminaram entre as datas; (c), (d), (e), (f) e (i) aprovadas como estavam. | Pedido do autor. |
 
 ## Registro de progresso
 
@@ -405,3 +429,10 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-21 | 4 | Autor aprovou a Fase 4 e as decisões de implementação (a)–(e). **Fase 4 concluída**: branch `feature/fase4-rastreabilidade` juntada na `main` e enviada ao GitHub. |
 | 2026-10-21 | 5 | Fase 5 iniciada na branch `feature/fase5-subprojetos`. Entregáveis implementados: sub-projetos com carga horária no histórico, vitrine de oportunidades, candidaturas, equipe com papéis e página pública `/projetos`. 127 testes passando; migration rodada no MySQL local; critério de conclusão conferido no navegador (computador e celular). Aguarda validação do autor e das decisões (a)–(i) para juntar na `main`. |
 | 2026-10-21 | 5 | Autor aprovou a Fase 5 e as decisões de implementação (a)–(i). **Fase 5 concluída**: branch `feature/fase5-subprojetos` juntada na `main` e enviada ao GitHub. |
+| 2026-10-21 | 6 | Fase 6 iniciada na branch `feature/fase6-entregas`. Entregáveis implementados: entregas com tipo dinâmico e upload, validação técnica e aceite com registro na linha do tempo, status de execução com sugestão, relatório por extensionista com exportação em PDF (`barryvdh/laravel-dompdf`). 158 testes passando, incluindo o critério de conclusão de ponta a ponta; migration rodada no MySQL local. Falta a conferência no navegador (login nas contas de teste) e a validação do autor e das decisões (a)–(i). |
+| 2026-10-21 | 6 | A pedido do autor, "homologar" passou a se chamar "aceite" ("Aceitar Solução", "Aguardando aceite", "Solução aceita") em telas, código, rotas e DER, e o admin e o coordenador passaram a ver os botões "Aceitar Solução" e "Reportar Pendência" para registrar a decisão em nome do demandante. 161 testes passando. |
+| 2026-10-27 | 6 | As caixas de confirmação do navegador (`confirm`/`alert`) foram trocadas por um modal do Bootstrap em todas as telas (status, perfil, candidaturas, equipe e entregas), porque o navegador embutido do app as bloqueava e as mudanças não eram enviadas. Conferido no navegador: "Cancelar" não envia e "Confirmar" envia. A demanda de teste foi para "Em Desenvolvimento" (passo 1 da conferência da Fase 6). |
+| 2026-10-27 | 6 | Autor concluiu a conferência no navegador: entrega → aprovação técnica → aceite (registrado pelo admin em nome do demandante) → "Concluída" → relatório. Critério de conclusão atingido. Aguarda a aprovação das decisões (a)–(i) e do pacote `barryvdh/laravel-dompdf` para juntar na `main`. |
+| 2026-10-27 | 6 | Autor revisou as decisões (a)–(i). Implementado: entregas numeradas e simultâneas (migration `2026_10_27_000001_add_numero_to_entregas_table`, que numerou a entrega de teste como nº 1), envio pela coordenação em nome da equipe, Excel nos arquivos e período estrito no relatório. 164 testes passando. |
+| 2026-10-27 | 6 | A pedido do autor, o relatório técnico também aceita planilhas do Excel (XLSX e XLS). 165 testes passando. |
+| 2026-10-27 | 6 | Autor aprovou a Fase 6, as decisões de implementação (a)–(i) revisadas e o pacote `barryvdh/laravel-dompdf`. **Fase 6 concluída**: branch `feature/fase6-entregas` juntada na `main` e enviada ao GitHub. |

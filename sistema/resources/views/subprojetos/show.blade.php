@@ -36,6 +36,9 @@
     @error('candidatura')
         <div class="alert alert-danger">{{ $message }}</div>
     @enderror
+    @error('entrega')
+        <div class="alert alert-danger">{{ $message }}</div>
+    @enderror
 
     <div class="row g-3">
         <div class="col-lg-8">
@@ -91,6 +94,9 @@
                     </div>
                 </div>
             @endif
+
+            {{-- RF12 e RF13: entregas da equipe e situação da validação. --}}
+            @include('subprojetos._entregas')
 
             {{-- RF11: equipe com papéis. --}}
             <div class="card shadow-sm mb-3">

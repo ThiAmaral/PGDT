@@ -33,6 +33,16 @@
         <div class="alert alert-danger">{{ $message }}</div>
     @enderror
 
+    {{-- RF13 etapa 2: o demandante aceita as entregas aprovadas pela coordenação. --}}
+    @if ($solicitacao->demandante_id === auth()->id())
+        @foreach ($entregas->filter(fn ($entrega) => auth()->user()->can('aceitar', $entrega)) as $entrega)
+            <div class="alert alert-primary d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+                <span>A coordenação aprovou a {{ mb_strtolower($entrega->rotulo()) }}, <strong>{{ $entrega->titulo }}</strong>. Confira a solução e aceite ou reporte o que ainda falta.</span>
+                <a href="{{ route('subprojetos.entregas.show', [$solicitacao->subprojeto, $entrega]) }}" class="btn btn-primary btn-sm text-nowrap">Ver entrega</a>
+            </div>
+        @endforeach
+    @endif
+
     <div class="row g-3">
         <div class="col-lg-8">
             <div class="card shadow-sm mb-3">
@@ -116,9 +126,18 @@
                             <dd class="col-7 mb-0">{{ $subprojeto->carga_horaria_estimada }} h (estimada)</dd>
                             <dt class="col-5 text-muted fw-normal">Equipe</dt>
                             <dd class="col-7 mb-0">{{ $subprojeto->membros_ativos_count }} de {{ $subprojeto->vagas }} vagas</dd>
+                            @if ($entregas->isNotEmpty())
+                                <dt class="col-12 text-muted fw-normal mt-2">Entregas</dt>
+                                @foreach ($entregas as $entrega)
+                                    <dd class="col-12 mb-0">
+                                        <a href="{{ route('subprojetos.entregas.show', [$subprojeto, $entrega]) }}">nº {{ $entrega->numero }} · {{ $entrega->titulo }}</a>
+                                        <span class="badge text-bg-{{ $entrega->situacao->cor() }}">{{ $entrega->situacao->rotulo() }}</span>
+                                    </dd>
+                                @endforeach
+                            @endif
                         </dl>
                         <a href="{{ route('subprojetos.show', $subprojeto) }}" class="btn btn-sm btn-outline-primary w-100">
-                            {{ auth()->user()->can('gerenciarEquipe', $subprojeto) ? 'Equipe e candidaturas' : 'Ver equipe' }}
+                            {{ auth()->user()->can('gerenciarEquipe', $subprojeto) ? 'Equipe, entregas e candidaturas' : 'Equipe e entregas' }}
                         </a>
                     </div>
                 </div>
@@ -224,8 +243,21 @@
                                 <p class="small text-muted">Sub-projeto criado. Se a equipe já pode começar, mude para "Em Desenvolvimento".</p>
                             @elseif ($solicitacao->status === \App\Enums\StatusDemanda::Priorizada)
                                 <p class="small text-muted">Para mudar para "Em Desenvolvimento", crie antes o sub-projeto.</p>
+                            @elseif ($statusSugerido === \App\Enums\StatusDemanda::EmValidacao)
+                                <p class="small text-muted">Há entrega em avaliação. Mudar para "Em Validação"?</p>
+                            @elseif ($statusSugerido === \App\Enums\StatusDemanda::AguardandoAjustes)
+                                <p class="small text-muted">A entrega mais recente voltou para a equipe. Mudar para "Aguardando Ajustes"?</p>
+                            @elseif ($statusSugerido === \App\Enums\StatusDemanda::Concluida)
+                                <p class="small text-muted">Todas as entregas foram avaliadas e a solução foi aceita. Mudar para "Concluída"?</p>
+                            @elseif ($solicitacao->status->permiteEntrega())
+                                <p class="small text-muted">"Concluída" fica disponível depois do aceite de uma entrega.</p>
                             @endif
                         @endunless
+
+                        @php($emAvaliacao = $entregas->filter(fn ($entrega) => $entrega->situacao->emAvaliacao())->count())
+                        @if (! $ehDemandante && $emAvaliacao > 0 && in_array(\App\Enums\StatusDemanda::Concluida, $statusDisponiveis, true))
+                            <p class="small text-warning-emphasis">{{ $emAvaliacao === 1 ? 'Uma entrega ainda está' : "{$emAvaliacao} entregas ainda estão" }} em avaliação.</p>
+                        @endif
 
                         <form method="POST" action="{{ route('demandas.status', $solicitacao) }}" data-confirmar-status data-status-atual="{{ $solicitacao->status->rotulo() }}" novalidate>
                             @csrf

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\Modalidade;
 use App\Enums\Perfil;
+use App\Enums\SituacaoEntrega;
 use App\Enums\StatusCandidatura;
 use App\Enums\StatusDemanda;
 use App\Enums\StatusUsuario;
@@ -16,6 +17,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Demanda aceita e executada por uma equipe de estudantes (RF09). O Projeto Base vem da demanda.
@@ -90,6 +92,16 @@ class Subprojeto extends Model
     public function membrosAtivos(): HasMany
     {
         return $this->membros()->ativos();
+    }
+
+    /**
+     * Entregas da equipe (RF12), na ordem de envio (nº 1, nº 2...).
+     *
+     * @return HasMany<Entrega, $this>
+     */
+    public function entregas(): HasMany
+    {
+        return $this->hasMany(Entrega::class)->orderBy('numero');
     }
 
     /**
@@ -207,6 +219,41 @@ class Subprojeto extends Model
         }
 
         return $this->recebeCandidaturas() ? null : 'As inscrições deste sub-projeto estão encerradas.';
+    }
+
+    /**
+     * Por que o usuário não pode enviar uma entrega agora, ou nulo se pode (RF12).
+     * Enviam os membros da equipe e, em nome dela, quem gerencia a demanda (coordenador e admin).
+     * Várias entregas podem estar em avaliação ao mesmo tempo.
+     */
+    public function impedimentoDeEntrega(Usuario $usuario): ?string
+    {
+        $ehMembro = $usuario->temPerfil(Perfil::Estudante) && $this->ehMembroAtivo($usuario);
+
+        if (! $ehMembro && ! Gate::forUser($usuario)->allows('gerencia', $this->solicitacao)) {
+            return 'Só os membros da equipe e a coordenação enviam entregas.';
+        }
+
+        if (! $this->solicitacao->status->permiteEntrega()) {
+            return $this->solicitacao->status->encerrada() || $this->solicitacao->status === StatusDemanda::Recusada
+                ? 'A demanda está encerrada e não recebe mais entregas.'
+                : 'As entregas começam quando a coordenação mudar a demanda para "Em Desenvolvimento".';
+        }
+
+        return null;
+    }
+
+    /**
+     * Próximo número de entrega do sub-projeto. Chamar com o sub-projeto travado (lockForUpdate).
+     */
+    public function proximoNumeroDeEntrega(): int
+    {
+        return (int) $this->entregas()->max('numero') + 1;
+    }
+
+    public function temEntregaAceita(): bool
+    {
+        return $this->entregas()->where('situacao', SituacaoEntrega::Aceita)->exists();
     }
 
     public function candidaturaDe(Usuario $usuario): ?Candidatura

@@ -261,13 +261,16 @@ O sub-projeto recebe candidaturas (vitrine RF10 e página pública RF14) quando 
 |---|---|---|
 | id | bigint PK | |
 | subprojeto_id | FK `subprojetos` | |
-| enviado_por | FK `usuarios` | membro ativo da equipe |
+| numero | smallint | ordem da entrega no sub-projeto (1, 2, 3...); único por sub-projeto |
+| enviado_por | FK `usuarios` | membro ativo da equipe, ou o coordenador/admin em nome da equipe |
 | tipo | varchar(20) | `link`, `relatorio`, `arquivos` |
 | titulo | varchar(150) | obrigatório |
 | descricao | text | opcional |
-| url | varchar(500) | obrigatório quando `tipo = link` |
+| url | varchar(500) | obrigatório quando `tipo = link`; só `http://` ou `https://` |
+| situacao | varchar(25) | `aguardando_tecnica`, `devolvida`, `aguardando_aceite`, `pendencia`, `aceita`; acompanha a última validação (Fase 6) |
+| created_at, updated_at | timestamp | |
 
-**`entrega_arquivos`** — até 5 por entrega; PDF, DOCX, JPG, PNG, ZIP; até 20 MB cada. Colunas: `id`, `entrega_id`, `nome_original`, `caminho`, `mime`, `tamanho_bytes`.
+**`entrega_arquivos`** — até 5 por entrega; PDF, DOCX, XLSX, XLS, JPG, PNG, ZIP (o relatório técnico aceita só PDF, DOCX e Excel); até 20 MB cada. Colunas: `id`, `entrega_id`, `nome_original`, `caminho`, `mime`, `tamanho_bytes`, `created_at`, `updated_at`. Os arquivos ficam no disco `local`, fora da pasta pública.
 
 **`validacoes`**
 
@@ -275,11 +278,11 @@ O sub-projeto recebe candidaturas (vitrine RF10 e página pública RF14) quando 
 |---|---|---|
 | id | bigint PK | |
 | entrega_id | FK `entregas` | |
-| etapa | varchar(15) | `tecnica` (coordenador) ou `homologacao` (demandante) |
-| decisao | varchar(20) | técnica: `aprovada` / `devolvida`; homologação: `homologada` / `pendencia` |
+| etapa | varchar(15) | `tecnica` (coordenador) ou `aceite` (demandante; o admin ou o coordenador podem registrar em nome dele) |
+| decisao | varchar(20) | técnica: `aprovada` / `devolvida`; aceite: `aceita` / `pendencia` |
 | feedback | text | obrigatório quando `devolvida` ou `pendencia` |
 | usuario_id | FK `usuarios` | quem decidiu |
-| created_at | timestamp | |
+| created_at | timestamp | só inclusão: a validação não é editada nem apagada |
 
 **RF15 (relatório por extensionista)** não precisa de tabela nova. É uma consulta em `membros_equipe` → `subprojetos` → `solicitacoes` → `projetos_base` / `escolas_instituicoes`, que usa `data_inicio`, `data_fim` e `carga_horaria_estimada` do sub-projeto.
 
