@@ -168,6 +168,7 @@
                 @if (\App\Models\Parametro::valor('email_contato'))
                     · Contato: <a href="mailto:{{ \App\Models\Parametro::valor('email_contato') }}" class="link-secondary">{{ \App\Models\Parametro::valor('email_contato') }}</a>
                 @endif
+                · <a href="{{ route('privacidade') }}" class="link-secondary">Aviso de privacidade</a>
             </div>
         </footer>
     </div>

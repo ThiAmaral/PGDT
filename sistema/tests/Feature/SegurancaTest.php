@@ -99,6 +99,17 @@ class SegurancaTest extends TestCase
             ->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
     }
 
+    public function test_aviso_de_privacidade_abre_sem_login_e_aparece_nos_cadastros(): void
+    {
+        $this->get('/privacidade')->assertOk()->assertSee('Aviso de privacidade')->assertSee('Quem vê os seus dados');
+
+        [, $token] = Convite::gerar('prof@ufes.br', Usuario::factory()->admin()->create());
+
+        foreach (['/cadastro/estudante', '/cadastro/demandante', "/convite/{$token}"] as $endereco) {
+            $this->get($endereco)->assertOk()->assertSee(route('privacidade'));
+        }
+    }
+
     public function test_cadastro_limita_os_envios_por_minuto(): void
     {
         $curso = Curso::create(['nome' => 'Sistemas de Informação']);

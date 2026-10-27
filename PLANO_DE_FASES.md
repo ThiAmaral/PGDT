@@ -415,7 +415,7 @@ Revisados as rotas, os middlewares, as policies, todos os controllers, os upload
 - Testes novos em `SegurancaTest` (8): todas as rotas internas mandam o visitante para o login; todas as rotas do admin dão 403 para coordenador, demandante e estudante; dashboard fechado para demandante e estudante; cabeçalhos; limite do cadastro; arquivo PHP renomeado para `.pdf` recusado; texto do chat sem link no e-mail; PDF sem projeto de outro coordenador. 195 testes no total, todos passando.
 
 **Pendente:**
-- LGPD: o sistema não tem aviso de privacidade nos cadastros (quais dados são coletados, para quê, quem é o responsável e como pedir a exclusão). O texto depende do autor e da UFES.
+- LGPD: rascunho do aviso de privacidade criado em `/privacidade` (2026-10-27), com link no rodapé e nos formulários de cadastro e de convite (aviso, sem caixa de marcar, porque a base legal proposta é a execução das atividades da universidade pública, e não o consentimento). Aguarda a revisão do autor. A confirmar com a UFES: encarregado de dados (DPO), base legal, prazo de guarda dos registros, hospedagem e serviço de e-mail. O e-mail de contato precisa ser preenchido nos parâmetros gerais.
 - Checklist de produção, para o guia de deploy: `APP_ENV=production`, `APP_DEBUG=false`, `LOG_LEVEL=warning`, HTTPS com `SESSION_SECURE_COOKIE=true`, a raiz do site apontando para `sistema/public`, senha do admin inicial trocada, `php artisan config:cache` e `route:cache`, `queue:work` sempre rodando e backup do banco e da pasta `storage/app`.
 
 **Critério de conclusão:** sistema implantado e validado com usuários; resultados documentados.
@@ -511,3 +511,4 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-27 | 8 | Fase 8 iniciada na branch `feature/fase8-testes-implantacao`. Autor decidiu: melhorias numa Fase 9 depois da implantação; produção a definir a partir de um levantamento de opções; testes com usuários por roteiro de tarefas. 187 testes passando no início da fase. |
 | 2026-10-27 | 8 | A pedido do autor, a hospedagem e o deploy passaram para o último passo da fase; os testes com usuários serão feitos no ambiente local. |
 | 2026-10-27 | 8 | Revisão de segurança concluída: limite de envios nos cadastros, cabeçalhos de segurança, texto dos usuários sem Markdown nos e-mails e título do projeto no PDF restrito. 8 testes novos (`SegurancaTest`); 195 no total, todos passando. Pendentes: aviso de privacidade (LGPD) e checklist de produção para o deploy. |
+| 2026-10-27 | 8 | Rascunho do aviso de privacidade (LGPD) em `/privacidade`, ligado ao rodapé e aos cadastros; conferido no navegador (computador e celular). 196 testes passando. Aguarda a revisão do autor e os dados da UFES. |

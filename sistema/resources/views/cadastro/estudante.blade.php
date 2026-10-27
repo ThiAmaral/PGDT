@@ -76,6 +76,8 @@
                             Depois de confirmar o e-mail, o seu cadastro fica <strong>em análise</strong> até o administrador aprovar.
                         </div>
 
+                        <p class="small text-muted">Ao criar a conta, você confirma que leu o <a href="{{ route('privacidade') }}" target="_blank" rel="noopener">aviso de privacidade</a>.</p>
+
                         <button type="submit" class="btn btn-primary w-100">Criar minha conta de estudante</button>
                     </form>
                 </div>

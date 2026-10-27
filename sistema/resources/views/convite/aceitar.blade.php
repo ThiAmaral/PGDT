@@ -58,6 +58,8 @@
                             @include('cadastro._senha')
                         </div>
 
+                        <p class="small text-muted">Ao concluir o cadastro, você confirma que leu o <a href="{{ route('privacidade') }}" target="_blank" rel="noopener">aviso de privacidade</a>.</p>
+
                         <button type="submit" class="btn btn-primary w-100">Concluir cadastro</button>
                     </form>
                 </div>

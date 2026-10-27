@@ -23,6 +23,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('inicio');
 
+// Fase 8 (LGPD): aviso de privacidade, sem login.
+Route::view('/privacidade', 'privacidade')->name('privacidade');
+
 // RF14: consulta pública dos projetos de extensão, sem login.
 Route::get('/projetos', [ProjetoPublicoController::class, 'index'])->name('publico.index');
 Route::get('/projetos/{projetoBase}', [ProjetoPublicoController::class, 'show'])->whereNumber('projetoBase')->name('publico.show');
