@@ -465,4 +465,4 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-27 | 7 | Fase 7 iniciada na branch `feature/fase7-complementos`. O autor escolheu o dashboard gerencial, as notificações por e-mail e os parâmetros gerais; o log de auditoria fica como trabalho futuro. |
 | 2026-10-27 | 7 | Entregáveis da Fase 7 implementados: parâmetros gerais, avisos por e-mail pela fila e dashboard gerencial. 187 testes passando; migration rodada no MySQL local. Falta a conferência no navegador com login e a aprovação das decisões (a)–(h) pelo autor. |
 | 2026-10-27 | 7 | Autor aprovou as decisões de implementação (a)–(h). Falta a conferência no navegador com login para concluir a fase. |
-| 2026-10-27 | 7 | Autor conferiu as telas no navegador e aprovou a Fase 7. **Fase 7 concluída**: branch `feature/fase7-complementos` juntada na `main`. |
+| 2026-10-27 | 7 | Autor conferiu as telas no navegador e aprovou a Fase 7. **Fase 7 concluída**: branch `feature/fase7-complementos` juntada na `main` e enviada ao GitHub. |
