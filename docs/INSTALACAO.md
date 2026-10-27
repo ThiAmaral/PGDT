@@ -87,6 +87,29 @@ Para mexer nas telas, deixar também `npm run dev` rodando em outro terminal: as
 - **Testes automatizados:** `php artisan test`. Usam SQLite em memória e não mexem no banco `pgdt`.
 - **Zerar o banco e recomeçar:** `php artisan migrate:fresh --seed`. Apaga todos os dados.
 
+## 6. Dados de demonstração (apresentação e testes com usuários)
+
+O `DemonstracaoSeeder` cria 4 escolas e instituições fictícias, 2 coordenadores, 5 demandantes, 7 estudantes, 4 projetos de extensão e 11 demandas, uma em cada etapa do ciclo (com sub-projetos, equipes, candidaturas, entregas, validações e chat). Também deixa um estudante e um demandante aguardando a aprovação do admin. Os e-mails terminam em `@demo.pgdt.example` e não recebem mensagens; nenhum aviso é enviado durante a carga. O seeder não roda em produção e não carrega duas vezes no mesmo banco.
+
+Para não misturar com os dados do banco `pgdt`, usar um banco separado, `pgdt_demo`:
+
+1. Em `sistema\.env`, preencher `DEMO_PASSWORD` com a senha das contas de demonstração. Vazia, o seeder gera uma e mostra no terminal.
+2. Criar o banco `pgdt_demo` no phpMyAdmin (`utf8mb4_unicode_ci`).
+3. Carregar, no PowerShell, dentro de `sistema`:
+
+```powershell
+$env:DB_DATABASE = 'pgdt_demo'
+php artisan migrate
+php artisan db:seed --class=DemonstracaoSeeder
+php artisan serve --port=8002
+```
+
+O terminal mostra a lista das contas. A variável vale só para esse terminal: os outros continuam no banco `pgdt`. Abrir em **http://127.0.0.1:8002**, e não em `localhost:8002`, para o login da demonstração não derrubar o login do `localhost:8000`, já que o navegador guarda os dois cookies no mesmo nome.
+
+- O admin do banco `pgdt_demo` é o mesmo do `.env` (`ADMIN_EMAIL`). Sem `ADMIN_PASSWORD`, a senha gerada aparece no terminal na primeira carga.
+- Recomeçar a demonstração do zero: no mesmo terminal, `php artisan migrate:fresh` e de novo o `db:seed --class=DemonstracaoSeeder`.
+- No app do Claude, a configuração `pgdt-demo` do `.claude/launch.json` já sobe o servidor da demonstração na porta 8002.
+
 ## Problemas comuns
 
 | Sintoma | Solução |

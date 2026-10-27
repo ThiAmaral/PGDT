@@ -6,6 +6,13 @@
       "runtimeExecutable": "php",
       "runtimeArgs": ["sistema/artisan", "serve", "--port=8000"],
       "port": 8000
+    },
+    {
+      "name": "pgdt-demo",
+      "runtimeExecutable": "php",
+      "runtimeArgs": ["sistema/artisan", "serve", "--port=8002"],
+      "env": { "DB_DATABASE": "pgdt_demo" },
+      "port": 8002
     }
   ]
 }

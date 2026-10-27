@@ -17,4 +17,12 @@ return [
         'senha' => env('ADMIN_PASSWORD'),
     ],
 
+    /*
+    | Contas do DemonstracaoSeeder (Fase 8). Sem DEMO_PASSWORD, o seeder gera
+    | uma senha aleatória e mostra no terminal. Nunca roda em produção.
+    */
+    'demonstracao' => [
+        'senha' => env('DEMO_PASSWORD'),
+    ],
+
 ];
