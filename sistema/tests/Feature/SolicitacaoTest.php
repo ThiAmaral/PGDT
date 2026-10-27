@@ -134,7 +134,7 @@ class SolicitacaoTest extends TestCase
 
     public function test_limita_a_quantidade_de_anexos(): void
     {
-        $arquivos = collect(range(1, Anexo::QUANTIDADE_MAXIMA + 1))
+        $arquivos = collect(range(1, Anexo::quantidadeMaxima() + 1))
             ->map(fn (int $numero) => UploadedFile::fake()->create("doc{$numero}.pdf", 10, 'application/pdf'))
             ->all();
 

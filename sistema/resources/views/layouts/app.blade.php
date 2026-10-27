@@ -38,6 +38,9 @@
                                 @switch(auth()->user()->perfil)
                                     @case(\App\Enums\Perfil::Admin)
                                         <li class="nav-item">
+                                            <a class="nav-link @if (request()->routeIs('dashboard')) active @endif" href="{{ route('dashboard') }}">Dashboard</a>
+                                        </li>
+                                        <li class="nav-item">
                                             <a class="nav-link @if (request()->routeIs('admin.usuarios.*')) active @endif" href="{{ route('admin.usuarios.index') }}">Usuários</a>
                                         </li>
                                         <li class="nav-item">
@@ -55,11 +58,18 @@
                                         <li class="nav-item">
                                             <a class="nav-link @if (request()->routeIs('relatorios.*')) active @endif" href="{{ route('relatorios.extensionistas') }}">Relatório</a>
                                         </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link @if (request()->routeIs('admin.dominios.*')) active @endif" href="{{ route('admin.dominios.index', 'tipologias') }}">Cadastros de apoio</a>
+                                        <li class="nav-item dropdown">
+                                            <a id="menuConfiguracoes" class="nav-link dropdown-toggle @if (request()->routeIs('admin.dominios.*', 'admin.parametros.*')) active @endif" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Configurações</a>
+                                            <ul class="dropdown-menu" aria-labelledby="menuConfiguracoes">
+                                                <li><a class="dropdown-item @if (request()->routeIs('admin.dominios.*')) active @endif" href="{{ route('admin.dominios.index', 'tipologias') }}">Cadastros de apoio</a></li>
+                                                <li><a class="dropdown-item @if (request()->routeIs('admin.parametros.*')) active @endif" href="{{ route('admin.parametros.index') }}">Parâmetros gerais</a></li>
+                                            </ul>
                                         </li>
                                         @break
                                     @case(\App\Enums\Perfil::Coordenador)
+                                        <li class="nav-item">
+                                            <a class="nav-link @if (request()->routeIs('dashboard')) active @endif" href="{{ route('dashboard') }}">Dashboard</a>
+                                        </li>
                                         <li class="nav-item">
                                             <a class="nav-link @if (request()->routeIs('demandas.*')) active @endif" href="{{ route('demandas.index') }}">Demandas</a>
                                         </li>
@@ -154,7 +164,10 @@
 
         <footer class="py-3 border-top bg-white">
             <div class="container small text-muted text-center">
-                Rede de Apoio Tecnológico às Escolas — UFES/CCENS, Alegre-ES
+                {{ \App\Models\Parametro::valor('nome_rede') }}
+                @if (\App\Models\Parametro::valor('email_contato'))
+                    · Contato: <a href="mailto:{{ \App\Models\Parametro::valor('email_contato') }}" class="link-secondary">{{ \App\Models\Parametro::valor('email_contato') }}</a>
+                @endif
             </div>
         </footer>
     </div>

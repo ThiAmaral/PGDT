@@ -6,6 +6,7 @@ use App\Enums\Complexidade;
 use App\Enums\Perfil;
 use App\Enums\SituacaoEntrega;
 use App\Enums\StatusDemanda;
+use App\Enums\StatusUsuario;
 use App\Enums\TipoHistorico;
 use App\Observers\SolicitacaoObserver;
 use Database\Factories\SolicitacaoFactory;
@@ -17,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Collection;
 
 /**
  * Demanda aberta pelo demandante (RF06), classificada pelo coordenador (RF07) e acompanhada
@@ -202,6 +204,33 @@ class Solicitacao extends Model
         };
 
         return $sugerido === $this->status ? null : $sugerido;
+    }
+
+    /**
+     * Quem coordena a demanda e recebe os avisos dela: o coordenador do Projeto Base e o responsável
+     * pelo sub-projeto. Sem nenhum dos dois (ex.: "Demandas Gerais" sem coordenador), os admins.
+     *
+     * @return Collection<int, Usuario>
+     */
+    public function coordenacao(): Collection
+    {
+        $coordenadores = collect([$this->projetoBase?->coordenador, $this->subprojeto?->coordenador])->filter()->unique('id');
+
+        if ($coordenadores->isNotEmpty()) {
+            return $coordenadores->values();
+        }
+
+        return Usuario::query()->where('perfil', Perfil::Admin)->where('status', StatusUsuario::Ativo)->get();
+    }
+
+    /**
+     * Estudantes que estão na equipe do sub-projeto (sem os removidos).
+     *
+     * @return Collection<int, Usuario>
+     */
+    public function equipe(): Collection
+    {
+        return $this->subprojeto?->membrosAtivos()->with('estudante')->get()->pluck('estudante')->filter()->values() ?? collect();
     }
 
     public function foiTriada(): bool

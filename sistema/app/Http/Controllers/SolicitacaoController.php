@@ -104,14 +104,14 @@ class SolicitacaoController extends Controller
             'descricao' => ['required', 'string', 'max:5000'],
             'justificativa' => ['required', 'string', 'max:5000'],
             'publico_afetado' => ['required', 'string', 'max:255'],
-            'anexos' => ['nullable', 'array', 'max:'.Anexo::QUANTIDADE_MAXIMA],
-            'anexos.*' => ['file', 'mimes:'.implode(',', Anexo::EXTENSOES), 'max:'.Anexo::TAMANHO_MAXIMO_KB],
+            'anexos' => ['nullable', 'array', 'max:'.Anexo::quantidadeMaxima()],
+            'anexos.*' => ['file', 'mimes:'.implode(',', Anexo::EXTENSOES), 'max:'.Anexo::tamanhoMaximoMb() * 1024],
         ], [
             'projeto_base_id.exists' => 'Escolha um projeto de extensão ativo.',
             'anexos.max' => 'Envie no máximo :max arquivos.',
             'anexos.*.mimes' => 'O :attribute não é PDF, JPG ou PNG.',
-            'anexos.*.max' => 'O :attribute tem mais de 5 MB.',
-            'anexos.*.uploaded' => 'O :attribute não pôde ser enviado. Verifique se ele tem até 5 MB.',
+            'anexos.*.max' => 'O :attribute tem mais de '.Anexo::tamanhoMaximoMb().' MB.',
+            'anexos.*.uploaded' => 'O :attribute não pôde ser enviado. Verifique se ele tem até '.Anexo::tamanhoMaximoMb().' MB.',
         ], [
             ...$nomesDosArquivos,
             'projeto_base_id' => 'projeto de extensão',

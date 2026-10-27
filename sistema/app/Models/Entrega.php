@@ -28,11 +28,21 @@ class Entrega extends Model
     /** @use HasFactory<EntregaFactory> */
     use HasFactory;
 
-    /** Tamanho máximo de cada arquivo, em KB (20 MB, decisão da Fase 0). */
-    public const TAMANHO_MAXIMO_KB = 20480;
+    /**
+     * Tamanho máximo de cada arquivo, em MB (parâmetro geral; padrão 20 MB, decisão da Fase 0).
+     */
+    public static function tamanhoMaximoMb(): int
+    {
+        return Parametro::inteiro('entrega_arquivos_tamanho_mb');
+    }
 
-    /** Quantidade máxima de arquivos por entrega. */
-    public const QUANTIDADE_MAXIMA = 5;
+    /**
+     * Quantidade máxima de arquivos por entrega (parâmetro geral; padrão 5).
+     */
+    public static function quantidadeMaxima(): int
+    {
+        return Parametro::inteiro('entrega_arquivos_quantidade');
+    }
 
     protected $table = 'entregas';
 

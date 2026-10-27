@@ -290,7 +290,9 @@ O sub-projeto recebe candidaturas (vitrine RF10 e página pública RF14) quando 
 
 **`logs_auditoria`** — `id`, `usuario_id` (nulo para ações anônimas), `acao`, `entidade`, `entidade_id`, `dados` (json), `ip`, `created_at`.
 
-**`parametros`** — `chave` (PK), `valor`, `descricao`, `updated_at`.
+**`parametros`** — `chave` (PK), `valor`, `atualizado_por` (FK `usuarios`, nulo), `updated_at`. A lista de parâmetros, os valores padrão e as descrições ficam no código (model `Parametro`); a tabela guarda só os valores que o admin alterou.
+
+**`logs_auditoria`** fica para trabalhos futuros (escolha do autor na Fase 7).
 
 ---
 

@@ -17,11 +17,21 @@ class Anexo extends Model
     /** Tipos aceitos na abertura da demanda. */
     public const EXTENSOES = ['pdf', 'jpg', 'jpeg', 'png'];
 
-    /** Tamanho máximo de cada arquivo, em KB (5 MB). */
-    public const TAMANHO_MAXIMO_KB = 5120;
+    /**
+     * Tamanho máximo de cada arquivo, em MB (parâmetro geral; padrão 5 MB).
+     */
+    public static function tamanhoMaximoMb(): int
+    {
+        return Parametro::inteiro('demanda_anexos_tamanho_mb');
+    }
 
-    /** Quantidade máxima de arquivos por demanda. */
-    public const QUANTIDADE_MAXIMA = 5;
+    /**
+     * Quantidade máxima de arquivos por demanda (parâmetro geral; padrão 5).
+     */
+    public static function quantidadeMaxima(): int
+    {
+        return Parametro::inteiro('demanda_anexos_quantidade');
+    }
 
     protected $table = 'anexos';
 

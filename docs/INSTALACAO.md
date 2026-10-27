@@ -66,11 +66,19 @@ php artisan serve
 
 Abrir http://localhost:8000 e entrar com `admin@pgdt.local` e a senha definida no `.env`.
 
+Os avisos por e-mail (Fase 7) vão para a fila do banco. Para eles saírem, deixar rodando em outro terminal:
+
+```powershell
+php artisan queue:work
+```
+
+Sem esse terminal, os avisos ficam guardados na tabela `jobs` e saem quando ele for ligado.
+
 Para mexer nas telas, deixar também `npm run dev` rodando em outro terminal: as mudanças de CSS e JS aparecem sem rodar o `npm run build` de novo.
 
 ## 5. Testes manuais
 
-- **E-mails:** não são enviados de verdade. Os e-mails de confirmação, aprovação, convite e recuperação de senha ficam no fim de `sistema\storage\logs\laravel.log`; os links são copiados de lá. Se o link vier com `&amp;`, trocar por `&` antes de colar no navegador.
+- **E-mails:** não são enviados de verdade. Os e-mails de confirmação, aprovação, convite, recuperação de senha e os avisos da Fase 7 (com o `queue:work` ligado) ficam no fim de `sistema\storage\logs\laravel.log`; os links são copiados de lá. Se o link vier com `&amp;`, trocar por `&` antes de colar no navegador.
 - **Roteiro sugerido:**
   1. Cadastrar um estudante com e-mail `@edu.ufes.br` e confirmar o e-mail pelo link do log.
   2. Cadastrar um demandante.

@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\Parametro;
 use App\Models\Usuario;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -23,6 +24,6 @@ class CadastroAprovado extends Notification
             ->greeting("Olá, {$notifiable->nome}!")
             ->line("Seu cadastro como {$notifiable->perfil->rotulo()} na ".config('app.name').' foi aprovado.')
             ->action('Entrar no sistema', route('login'))
-            ->salutation('Rede de Apoio Tecnológico às Escolas — UFES/CCENS');
+            ->salutation(Parametro::valor('nome_rede'));
     }
 }

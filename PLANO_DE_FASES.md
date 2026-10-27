@@ -26,7 +26,7 @@ Base: TCC1 de Paulo Henrique Bressanini Rizzi e o documento "Funcionalidades do 
 | 4 | Rastreabilidade e comunicação | RF08 | ✅ |
 | 5 | Sub-projetos, vitrine pública e equipe | RF09, RF10, RF11, RF14 | ✅ |
 | 6 | Entregas, validação e relatório | RF12, RF13, RF15 | ✅ |
-| 7 | Complementos (dashboard, notificações, auditoria) | antigos RF04/RF22/RF23 do TCC | ⬜ |
+| 7 | Complementos (dashboard, notificações, parâmetros) | antigos RF04/RF22/RF23 do TCC | 🟨 |
 | 8 | Testes, validação com usuários e implantação | RNF01–RNF05 | ⬜ |
 
 Cada fase termina com algo **utilizável e demonstrável**. Uma fase só começa depois que o critério de conclusão da anterior for atingido.
@@ -334,14 +334,39 @@ Regras para evitar erro do usuário:
 
 ---
 
-## Fase 7 — Complementos ⬜
+## Fase 7 — Complementos 🟨
 
-Itens do TCC que não estão no documento de RF, mas que agregam valor.
+Itens do TCC que não estão no documento de RF, mas que agregam valor. O autor escolheu em 2026-10-27 os itens 1, 2 e 4; o log de auditoria fica como trabalho futuro.
 
-- [ ] Dashboard gerencial (demandas por status, categoria, escola e tempo médio de atendimento).
-- [ ] Notificações por e-mail (cadastro aprovado, mudança de status, nova mensagem, candidatura aprovada, entrega devolvida).
-- [ ] Log de auditoria geral (logins, alterações administrativas).
-- [ ] Parâmetros gerais configuráveis pelo admin.
+- [x] Dashboard gerencial (demandas por status, categoria, escola e tempo médio de atendimento).
+- [x] Notificações por e-mail (cadastro aprovado, mudança de status, nova mensagem, candidatura aprovada, entrega devolvida).
+- [x] Parâmetros gerais configuráveis pelo admin.
+
+### Como foi implementado (2026-10-27)
+- **Código:** branch `feature/fase7-complementos`. Migration `2026_10_27_000002_create_parametros_table`; model `Parametro`; notificação `Aviso`; observers novos `MensagemObserver` e `CandidaturaObserver` (os de demanda, entrega e validação passaram a enviar avisos); controllers `Admin\ParametroController` e `DashboardController`. Nenhum pacote novo.
+- **Parâmetros gerais:** menu "Configurações" → "Parâmetros gerais" (só admin), em `/admin/parametros`. Parâmetros: nome da rede (rodapé, página inicial, assinatura dos e-mails e PDF do relatório), e-mail de contato (rodapé e e-mails), avisos por e-mail ligados ou desligados, quantidade e tamanho dos anexos da demanda (padrão 5 arquivos de 5 MB) e dos arquivos da entrega (padrão 5 de 20 MB). A tela mostra os limites do servidor (`upload_max_filesize` e `post_max_size` do PHP) e não aceita valores acima deles. A tabela guarda só o que foi alterado, com quem alterou; sem alteração, valem os padrões.
+- **Avisos por e-mail:** um e-mail por acontecimento, com botão para a tela certa, assinatura da rede e e-mail de contato:
+  - nova demanda → coordenação (coordenador do Projeto Base e responsável pelo sub-projeto; sem nenhum, os admins);
+  - mudança de status → demandante e equipe (com o motivo, em "Recusada" e "Cancelada");
+  - mensagem no chat → demandante, coordenação e equipe;
+  - candidatura nova → coordenação; aprovada ou recusada → estudante;
+  - entrega enviada → coordenação; aprovada tecnicamente → demandante (chamado para o aceite) e equipe; devolvida → equipe; aceita ou com pendência → equipe e coordenação (com o comentário).
+  - Quem fez a ação não recebe o aviso, e contas inativas não recebem nada. Os e-mails vão pela fila depois de a ação ser gravada (`php artisan queue:work`, ver `docs/INSTALACAO.md`).
+- **Dashboard:** menu "Dashboard" (admin e coordenador), em `/dashboard`. Totais (demandas, em triagem, em execução, concluídas), tempo médio de atendimento (da abertura até "Concluída") e tempo médio da primeira resposta (da abertura até sair de "Cadastrada"), calculados pela linha do tempo; barras por status, categoria, escola ou instituição (as 10 com mais demandas e "Outras") e projeto de extensão. Filtros: período de abertura e Projeto Base. O coordenador vê só as demandas que já vê na lista.
+- **Testes:** 22 testes novos (`ParametroTest`, `NotificacaoTest` e `DashboardTest`); 187 no total, todos passando. Migration rodada no MySQL local.
+
+### Decisões de implementação (aguardam a aprovação do autor)
+- (a) Os e-mails de cadastro, convite e recuperação de senha continuam sempre ligados; o parâmetro "Enviar avisos por e-mail" desliga só os avisos novos da Fase 7.
+- (b) Cada mensagem do chat gera um e-mail para os outros participantes (sem resumo diário).
+- (c) Os admins só recebem avisos das demandas sem coordenador (ex.: "Demandas Gerais"); nas demais, quem recebe é a coordenação.
+- (d) Avisos extras, além dos listados no TCC: nova demanda, nova candidatura, entrega enviada, aprovação técnica e aceite.
+- (e) Os avisos vão pela fila do banco; em produção, o `queue:work` precisa ficar rodando (entra no deploy da Fase 8).
+- (f) O tempo médio de atendimento conta só as demandas que estão "Concluída"; o período do dashboard filtra pela data de abertura.
+- (g) O dashboard não tem exportação para PDF nem gráfico por mês nesta fase.
+- (h) "Cadastros de apoio" e "Parâmetros gerais" ficam juntos no menu "Configurações" do admin.
+
+### Trabalhos futuros
+- Log de auditoria geral (logins, alterações administrativas): não entra nesta fase, por escolha do autor (2026-10-27). A linha do tempo das demandas (RF08) continua registrando as ações sobre cada demanda.
 
 **Critério de conclusão:** os itens escolhidos estão funcionando; os demais ficam registrados como trabalhos futuros.
 
@@ -373,7 +398,7 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 4 | historicos, mensagens |
 | 5 | subprojetos, candidaturas, papeis_equipe, membros_equipe |
 | 6 | entregas, entrega_arquivos, validacoes |
-| 7 | logs_auditoria, parametros |
+| 7 | parametros (`logs_auditoria` fica para trabalhos futuros) |
 
 ---
 
@@ -436,3 +461,5 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-27 | 6 | Autor revisou as decisões (a)–(i). Implementado: entregas numeradas e simultâneas (migration `2026_10_27_000001_add_numero_to_entregas_table`, que numerou a entrega de teste como nº 1), envio pela coordenação em nome da equipe, Excel nos arquivos e período estrito no relatório. 164 testes passando. |
 | 2026-10-27 | 6 | A pedido do autor, o relatório técnico também aceita planilhas do Excel (XLSX e XLS). 165 testes passando. |
 | 2026-10-27 | 6 | Autor aprovou a Fase 6, as decisões de implementação (a)–(i) revisadas e o pacote `barryvdh/laravel-dompdf`. **Fase 6 concluída**: branch `feature/fase6-entregas` juntada na `main` e enviada ao GitHub. |
+| 2026-10-27 | 7 | Fase 7 iniciada na branch `feature/fase7-complementos`. O autor escolheu o dashboard gerencial, as notificações por e-mail e os parâmetros gerais; o log de auditoria fica como trabalho futuro. |
+| 2026-10-27 | 7 | Entregáveis da Fase 7 implementados: parâmetros gerais, avisos por e-mail pela fila e dashboard gerencial. 187 testes passando; migration rodada no MySQL local. Falta a conferência no navegador com login e a aprovação das decisões (a)–(h) pelo autor. |

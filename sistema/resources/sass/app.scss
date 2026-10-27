@@ -151,3 +151,41 @@
         white-space: pre-line;
     }
 }
+
+// Dashboard gerencial (Fase 7): barras horizontais de uma só cor
+.barras {
+    .barra-linha {
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+        gap: .25rem .75rem;
+        align-items: center;
+        padding: .25rem 0;
+
+        @include media-breakpoint-down(sm) {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        &:hover .barra {
+            background-color: shade-color($primary, 25%);
+        }
+    }
+
+    .barra-trilho {
+        display: block;
+        height: .75rem;
+        background-color: var(--bs-tertiary-bg);
+        border-radius: 4px;
+    }
+
+    .barra {
+        display: block;
+        height: 100%;
+        background-color: $primary;
+        border-radius: 4px;
+    }
+
+    .barra-valor {
+        min-width: 5.5rem;
+        white-space: nowrap;
+    }
+}
