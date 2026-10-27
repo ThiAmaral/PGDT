@@ -2,10 +2,12 @@
 
 use App\Http\Controllers\Admin\ConviteController as AdminConviteController;
 use App\Http\Controllers\Admin\DominioController;
+use App\Http\Controllers\Admin\ParametroController;
 use App\Http\Controllers\Admin\UsuarioController;
 use App\Http\Controllers\Cadastro\CadastroController;
 use App\Http\Controllers\Cadastro\ConviteController;
 use App\Http\Controllers\CandidaturaController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EntregaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MembroEquipeController;
@@ -67,6 +69,10 @@ Route::middleware(['auth', 'verified', 'ativo'])->group(function () {
         Route::post('/cadastros/{tipo}', [DominioController::class, 'store'])->whereIn('tipo', array_keys(DominioController::TIPOS))->name('dominios.store');
         Route::patch('/cadastros/{tipo}/{id}', [DominioController::class, 'update'])->whereIn('tipo', array_keys(DominioController::TIPOS))->whereNumber('id')->name('dominios.update');
         Route::redirect('/cadastros', '/admin/cadastros/tipologias');
+
+        // Fase 7: parâmetros gerais do sistema.
+        Route::get('/parametros', [ParametroController::class, 'index'])->name('parametros.index');
+        Route::patch('/parametros', [ParametroController::class, 'update'])->name('parametros.update');
     });
 
     // RF05: Projetos Base. As permissões ficam na ProjetoBasePolicy.
@@ -117,6 +123,9 @@ Route::middleware(['auth', 'verified', 'ativo'])->group(function () {
         Route::post('/entregas/{entrega}/validacao', [EntregaController::class, 'validar'])->name('entregas.validar');
         Route::post('/entregas/{entrega}/aceite', [EntregaController::class, 'aceitar'])->name('entregas.aceitar');
     });
+
+    // Fase 7: dashboard gerencial.
+    Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('perfil:admin,coordenador')->name('dashboard');
 
     // RF15: relatório de demandas executadas por extensionista.
     Route::get('/relatorios/extensionistas', [RelatorioController::class, 'extensionistas'])->name('relatorios.extensionistas');

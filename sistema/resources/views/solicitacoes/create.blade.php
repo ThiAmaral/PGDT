@@ -82,12 +82,12 @@
                         <div class="zona-upload rounded border border-2 p-4 text-center @if ($errors->has('anexos') || $errors->has('anexos.*')) border-danger @endif"
                              data-upload
                              data-extensoes="{{ implode(',', \App\Models\Anexo::EXTENSOES) }}"
-                             data-tamanho-maximo="{{ \App\Models\Anexo::TAMANHO_MAXIMO_KB * 1024 }}"
-                             data-quantidade-maxima="{{ \App\Models\Anexo::QUANTIDADE_MAXIMA }}">
+                             data-tamanho-maximo="{{ \App\Models\Anexo::tamanhoMaximoMb() * 1024 * 1024 }}"
+                             data-quantidade-maxima="{{ \App\Models\Anexo::quantidadeMaxima() }}">
                             <input id="anexos" type="file" name="anexos[]" class="d-none" multiple accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png">
                             <p class="mb-2">Arraste os arquivos para cá ou</p>
                             <label for="anexos" class="btn btn-outline-primary btn-sm mb-2">Escolher arquivos</label>
-                            <p class="small text-muted mb-0">PDF, JPG ou PNG · até 5 MB cada · no máximo {{ \App\Models\Anexo::QUANTIDADE_MAXIMA }} arquivos. Opcional.</p>
+                            <p class="small text-muted mb-0">PDF, JPG ou PNG · até {{ \App\Models\Anexo::tamanhoMaximoMb() }} MB cada · no máximo {{ \App\Models\Anexo::quantidadeMaxima() }} arquivos. Opcional.</p>
                         </div>
                         <ul class="list-group mt-2" data-upload-lista></ul>
                         <div class="small text-danger mt-1" data-upload-erro></div>

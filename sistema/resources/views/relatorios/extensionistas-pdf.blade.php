@@ -23,7 +23,7 @@
 <body>
     <div class="cabecalho">
         <h1>Relatório de demandas executadas por extensionista</h1>
-        <div>Rede de Apoio Tecnológico às Escolas · UFES/CCENS</div>
+        <div>{{ \App\Models\Parametro::valor('nome_rede') }}</div>
         <div class="muted">
             Status: {{ $filtros['status'] === \App\Http\Controllers\RelatorioController::TODOS_OS_STATUS ? 'todos' : \App\Enums\StatusDemanda::from($filtros['status'])->rotulo() }}
             @if ($projeto) · Projeto: {{ $projeto->titulo }} @endif

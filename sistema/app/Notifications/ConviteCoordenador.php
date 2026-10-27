@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Convite;
+use App\Models\Parametro;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -28,6 +29,6 @@ class ConviteCoordenador extends Notification
             ->action('Aceitar convite', route('convite.aceitar', $this->token))
             ->line('O link pode ser usado uma única vez e vale por '.Convite::VALIDADE_DIAS.' dias.')
             ->line('Se você não esperava este convite, ignore este e-mail.')
-            ->salutation('Rede de Apoio Tecnológico às Escolas — UFES/CCENS');
+            ->salutation(Parametro::valor('nome_rede'));
     }
 }

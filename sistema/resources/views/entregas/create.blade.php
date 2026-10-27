@@ -42,7 +42,7 @@
                         <span class="form-label d-block">Tipo de entrega <span class="text-danger">*</span></span>
                         <div class="row g-2">
                             @foreach ($tipos as $tipo)
-                                @php($dica = $tipo->rotuloDosArquivos().' · até 20 MB cada · no máximo '.\App\Models\Entrega::QUANTIDADE_MAXIMA.' arquivos.')
+                                @php($dica = $tipo->rotuloDosArquivos().' · até '.\App\Models\Entrega::tamanhoMaximoMb().' MB cada · no máximo '.\App\Models\Entrega::quantidadeMaxima().' arquivos.')
                                 <div class="col-sm-4">
                                     <input type="radio" class="btn-check" name="tipo" id="tipo-{{ $tipo->value }}" value="{{ $tipo->value }}" autocomplete="off"
                                            data-exige-arquivo="{{ $tipo->exigeArquivo() ? 1 : 0 }}"
@@ -89,8 +89,8 @@
                         <div class="zona-upload rounded border border-2 p-4 text-center @if ($errors->has('arquivos') || $errors->has('arquivos.*')) border-danger @endif"
                              data-upload
                              data-extensoes="{{ implode(',', \App\Enums\TipoEntrega::Arquivos->extensoes()) }}"
-                             data-tamanho-maximo="{{ \App\Models\Entrega::TAMANHO_MAXIMO_KB * 1024 }}"
-                             data-quantidade-maxima="{{ \App\Models\Entrega::QUANTIDADE_MAXIMA }}">
+                             data-tamanho-maximo="{{ \App\Models\Entrega::tamanhoMaximoMb() * 1024 * 1024 }}"
+                             data-quantidade-maxima="{{ \App\Models\Entrega::quantidadeMaxima() }}">
                             <input id="arquivos" type="file" name="arquivos[]" class="d-none" multiple>
                             <p class="mb-2">Arraste os arquivos para cá ou</p>
                             <label for="arquivos" class="btn btn-outline-primary btn-sm mb-2">Escolher arquivos</label>

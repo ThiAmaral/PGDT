@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\Parametro;
 use App\Models\Usuario;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -26,6 +27,6 @@ class CadastroRejeitado extends Notification
             ->line('Seu cadastro na '.config('app.name').' não foi aprovado.')
             ->line("Motivo: {$this->motivo}")
             ->line('Em caso de dúvida, procure a coordenação do projeto.')
-            ->salutation('Rede de Apoio Tecnológico às Escolas — UFES/CCENS');
+            ->salutation(Parametro::valor('nome_rede'));
     }
 }

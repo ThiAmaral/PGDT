@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Enums\StatusCandidatura;
+use App\Observers\CandidaturaObserver;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -12,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * Candidatura do estudante a um sub-projeto (RF10), avaliada pela coordenação (RF11).
  */
 #[Fillable(['subprojeto_id', 'estudante_id', 'status', 'avaliado_por', 'avaliado_em'])]
+#[ObservedBy(CandidaturaObserver::class)]
 class Candidatura extends Model
 {
     protected $table = 'candidaturas';

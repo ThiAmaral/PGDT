@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Enums\Perfil;
+use App\Observers\MensagemObserver;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -11,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * Comentário no chat da demanda (RF08). Não é editado nem apagado, para a conversa servir de registro.
  */
 #[Fillable(['solicitacao_id', 'usuario_id', 'perfil', 'texto'])]
+#[ObservedBy(MensagemObserver::class)]
 class Mensagem extends Model
 {
     public const UPDATED_AT = null;

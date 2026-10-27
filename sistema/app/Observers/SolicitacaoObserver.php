@@ -8,11 +8,13 @@ use App\Enums\TipoHistorico;
 use App\Models\CategoriaDemanda;
 use App\Models\Prioridade;
 use App\Models\Solicitacao;
+use App\Notifications\Aviso;
 use Illuminate\Support\Facades\Auth;
 
 /**
  * RF08: registra na linha do tempo a abertura, cada mudança de status e cada classificação,
- * sem depender de o controller lembrar de gravar.
+ * sem depender de o controller lembrar de gravar. Avisa por e-mail a coordenação da demanda nova
+ * e o demandante e a equipe de cada mudança de status (Fase 7).
  */
 class SolicitacaoObserver
 {
@@ -24,6 +26,16 @@ class SolicitacaoObserver
             'descricao' => 'Demanda aberta',
             'dados' => ['de' => null, 'para' => $solicitacao->status->value],
         ]);
+
+        Aviso::enviar($solicitacao->coordenacao(), new Aviso(
+            "Nova demanda: {$solicitacao->titulo}",
+            [
+                "{$solicitacao->demandante->nome} abriu uma demanda no projeto \"{$solicitacao->projetoBase->titulo}\".",
+                'A demanda aguarda a análise da coordenação.',
+            ],
+            'Ver a demanda',
+            route('demandas.show', $solicitacao),
+        ));
     }
 
     public function updated(Solicitacao $solicitacao): void
@@ -52,6 +64,16 @@ class SolicitacaoObserver
                 'motivo' => $novo->exigeMotivo() ? $solicitacao->motivo_status : null,
             ], fn ($valor) => $valor !== null),
         ]);
+
+        Aviso::enviar([$solicitacao->demandante, ...$solicitacao->equipe()], new Aviso(
+            "Demanda \"{$solicitacao->titulo}\": {$novo->rotulo()}",
+            array_values(array_filter([
+                "O status da demanda \"{$solicitacao->titulo}\" mudou de \"{$anterior->rotulo()}\" para \"{$novo->rotulo()}\".",
+                $novo->exigeMotivo() && $solicitacao->motivo_status ? "Motivo: {$solicitacao->motivo_status}" : null,
+            ])),
+            'Acompanhar a demanda',
+            route('demandas.show', $solicitacao),
+        ));
     }
 
     /**

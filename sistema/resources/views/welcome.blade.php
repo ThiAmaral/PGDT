@@ -6,7 +6,7 @@
         <div class="col-lg-8 text-center py-5">
             <h1 class="display-6 fw-semibold">Plataforma de Gestão de Demandas Tecnológicas</h1>
             <p class="lead text-muted mt-3">
-                Rede de Apoio Tecnológico às Escolas — UFES/CCENS, Alegre-ES
+                {{ \App\Models\Parametro::valor('nome_rede') }}
             </p>
 
             <div class="d-flex flex-column flex-sm-row justify-content-center gap-2 mt-4">
