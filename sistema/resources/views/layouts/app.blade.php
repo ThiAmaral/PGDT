@@ -18,7 +18,8 @@
 </head>
 <body class="bg-light">
     <div id="app" class="d-flex flex-column min-vh-100">
-        <nav class="navbar navbar-expand-md navbar-dark bg-primary shadow-sm">
+        {{-- RNF02: o menu do admin tem mais itens e só cabe numa linha a partir de 1200 px; os outros, a partir de 992 px. Abaixo disso vira o botão de menu. --}}
+        <nav class="navbar {{ auth()->user()?->temPerfil(\App\Enums\Perfil::Admin) ? 'navbar-expand-xl' : 'navbar-expand-lg' }} navbar-dark bg-primary shadow-sm">
             <div class="container">
                 <a class="navbar-brand fw-semibold" href="{{ auth()->check() ? route('home') : route('inicio') }}">
                     {{ config('app.name', 'PGDT') }}

@@ -381,16 +381,16 @@ Itens do TCC que não estão no documento de RF, mas que agregam valor. O autor 
 - Testes com usuários: **roteiro de tarefas por perfil**; o autor coleta os comentários livremente.
 
 ### Ordem de trabalho
-1. Revisão de segurança e das permissões, com testes automáticos para o que faltar.
-2. Testes de responsividade (celular, tablet, desktop).
+1. Revisão de segurança e das permissões, com testes automáticos para o que faltar. ✅ (falta a revisão do aviso de privacidade pelo autor)
+2. Testes de responsividade (celular, tablet, desktop). ✅
 3. Dados de demonstração (seeder separado, fora do `DatabaseSeeder`).
 4. Roteiro de testes por perfil → testes com usuários (no ambiente local) → correções.
 5. Por último: levantamento das opções de produção → decisão do autor → guia de deploy (inclui `queue:work`/cron e HTTPS) → deploy.
 
 
 - [ ] Testes automatizados (Feature tests do Laravel) para os fluxos principais e as permissões.
-- [ ] Revisão de segurança: CSRF, hash de senhas, validação de uploads, autorização em todas as rotas, LGPD (dados mínimos necessários).
-- [ ] Testes de responsividade (celular, tablet, desktop) — RNF02.
+- [x] Revisão de segurança: CSRF, hash de senhas, validação de uploads, autorização em todas as rotas, LGPD (dados mínimos necessários).
+- [x] Testes de responsividade (celular, tablet, desktop) — RNF02.
 - [ ] Dados de demonstração (seeders) para a apresentação.
 - [ ] Testes com usuários reais (coordenador, demandante de escola ou instituição, estudantes) e registro dos resultados para o TCC2.
 - [ ] Correções a partir do feedback.
@@ -417,6 +417,13 @@ Revisados as rotas, os middlewares, as policies, todos os controllers, os upload
 **Pendente:**
 - LGPD: rascunho do aviso de privacidade criado em `/privacidade` (2026-10-27), com link no rodapé e nos formulários de cadastro e de convite (aviso, sem caixa de marcar, porque a base legal proposta é a execução das atividades da universidade pública, e não o consentimento). Aguarda a revisão do autor. A confirmar com a UFES: encarregado de dados (DPO), base legal, prazo de guarda dos registros, hospedagem e serviço de e-mail. O e-mail de contato precisa ser preenchido nos parâmetros gerais.
 - Checklist de produção, para o guia de deploy: `APP_ENV=production`, `APP_DEBUG=false`, `LOG_LEVEL=warning`, HTTPS com `SESSION_SECURE_COOKIE=true`, a raiz do site apontando para `sistema/public`, senha do admin inicial trocada, `php artisan config:cache` e `route:cache`, `queue:work` sempre rodando e backup do banco e da pasta `storage/app`.
+
+### Testes de responsividade — RNF02 (2026-10-27)
+- **Como foi feito:** um script no navegador abriu cada tela em 360 px (celular), 768 px (tablet) e 1280 px (computador) e mediu se a página ficava mais larga que a tela. Foram 26 telas logado como admin (painel, dashboard, usuários, convites, configurações, Projetos Base, demandas, sub-projetos, entregas, vitrine, relatório, página pública) e 9 telas de visitante (início, login, cadastros, recuperação de senha, página pública e aviso de privacidade). Depois, as telas principais foram conferidas visualmente no celular e no tablet.
+- **Problema encontrado e corrigido:** no tablet, o menu do admin ficava mais largo que a tela em todas as páginas (cerca de 920 px para 768 px). O menu do admin agora vira o botão de menu abaixo de 1200 px, e o dos outros perfis abaixo de 992 px. Medido de novo em 768, 992, 1024, 1199, 1200 e 1280 px: sem rolagem lateral e com o menu numa linha só.
+- **Sem outros problemas:** no celular, nenhuma tela tem rolagem lateral; as tabelas (usuários, demandas, relatório) rolam dentro do próprio quadro.
+- **Fica para a conferência com os dados de demonstração:** as telas vistas só por outros perfis (painel do estudante e do demandante, formulário de nova demanda, candidatura), que precisam de contas de teste desses perfis.
+- **Sugestão para a Fase 9:** no celular, a lista de usuários e o relatório mostram as últimas colunas só rolando a tabela (o status do usuário, por exemplo, fica escondido à direita). Um layout em cartões nessas telas ficaria melhor.
 
 **Critério de conclusão:** sistema implantado e validado com usuários; resultados documentados.
 
@@ -512,3 +519,4 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-27 | 8 | A pedido do autor, a hospedagem e o deploy passaram para o último passo da fase; os testes com usuários serão feitos no ambiente local. |
 | 2026-10-27 | 8 | Revisão de segurança concluída: limite de envios nos cadastros, cabeçalhos de segurança, texto dos usuários sem Markdown nos e-mails e título do projeto no PDF restrito. 8 testes novos (`SegurancaTest`); 195 no total, todos passando. Pendentes: aviso de privacidade (LGPD) e checklist de produção para o deploy. |
 | 2026-10-27 | 8 | Rascunho do aviso de privacidade (LGPD) em `/privacidade`, ligado ao rodapé e aos cadastros; conferido no navegador (computador e celular). 196 testes passando. Aguarda a revisão do autor e os dados da UFES. |
+| 2026-10-27 | 8 | Testes de responsividade: 35 telas medidas em celular, tablet e computador. Corrigido o menu do admin, que ficava mais largo que a tela no tablet. Telas dos outros perfis ficam para a conferência com os dados de demonstração. O aviso de privacidade continua como rascunho, aguardando a revisão do autor. |
