@@ -27,7 +27,8 @@ Base: TCC1 de Paulo Henrique Bressanini Rizzi e o documento "Funcionalidades do 
 | 5 | Sub-projetos, vitrine pública e equipe | RF09, RF10, RF11, RF14 | ✅ |
 | 6 | Entregas, validação e relatório | RF12, RF13, RF15 | ✅ |
 | 7 | Complementos (dashboard, notificações, parâmetros) | antigos RF04/RF22/RF23 do TCC | ✅ |
-| 8 | Testes, validação com usuários e implantação | RNF01–RNF05 | ⬜ |
+| 8 | Testes, validação com usuários e implantação | RNF01–RNF05 | 🟨 |
+| 9 | Melhorias do sistema | a definir | ⬜ |
 
 Cada fase termina com algo **utilizável e demonstrável**. Uma fase só começa depois que o critério de conclusão da anterior for atingido.
 
@@ -372,7 +373,21 @@ Itens do TCC que não estão no documento de RF, mas que agregam valor. O autor 
 
 ---
 
-## Fase 8 — Testes, validação com usuários e implantação ⬜
+## Fase 8 — Testes, validação com usuários e implantação 🟨
+
+### Escolhas do autor (2026-10-27)
+- As melhorias que o autor quer fazer ficam para uma **Fase 9**, depois do sistema implantado.
+- O ambiente de produção ainda não está definido: levantar as opções (servidor da UFES, hospedagem compartilhada, VPS/nuvem) com prós, contras e custos para o autor decidir.
+- Testes com usuários: **roteiro de tarefas por perfil**; o autor coleta os comentários livremente.
+
+### Ordem de trabalho
+1. Revisão de segurança e das permissões, com testes automáticos para o que faltar.
+2. Testes de responsividade (celular, tablet, desktop).
+3. Dados de demonstração (seeder separado, fora do `DatabaseSeeder`).
+4. Levantamento das opções de produção → decisão do autor → guia de deploy (inclui `queue:work`/cron e HTTPS).
+5. Deploy.
+6. Roteiro de testes por perfil → testes com usuários → correções.
+
 
 - [ ] Testes automatizados (Feature tests do Laravel) para os fluxos principais e as permissões.
 - [ ] Revisão de segurança: CSRF, hash de senhas, validação de uploads, autorização em todas as rotas, LGPD (dados mínimos necessários).
@@ -383,6 +398,12 @@ Itens do TCC que não estão no documento de RF, mas que agregam valor. O autor 
 - [ ] Definir o ambiente de produção e fazer o deploy.
 
 **Critério de conclusão:** sistema implantado e validado com usuários; resultados documentados.
+
+---
+
+## Fase 9 — Melhorias do sistema ⬜
+
+Melhorias pedidas pelo autor depois da implantação. Itens a definir.
 
 ---
 
@@ -466,3 +487,4 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-27 | 7 | Entregáveis da Fase 7 implementados: parâmetros gerais, avisos por e-mail pela fila e dashboard gerencial. 187 testes passando; migration rodada no MySQL local. Falta a conferência no navegador com login e a aprovação das decisões (a)–(h) pelo autor. |
 | 2026-10-27 | 7 | Autor aprovou as decisões de implementação (a)–(h). Falta a conferência no navegador com login para concluir a fase. |
 | 2026-10-27 | 7 | Autor conferiu as telas no navegador e aprovou a Fase 7. **Fase 7 concluída**: branch `feature/fase7-complementos` juntada na `main` e enviada ao GitHub. |
+| 2026-10-27 | 8 | Fase 8 iniciada na branch `feature/fase8-testes-implantacao`. Autor decidiu: melhorias numa Fase 9 depois da implantação; produção a definir a partir de um levantamento de opções; testes com usuários por roteiro de tarefas. 187 testes passando no início da fase. |
