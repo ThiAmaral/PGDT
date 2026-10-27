@@ -164,7 +164,7 @@ class DemonstracaoSeeder extends Seeder
             'Os 12 computadores do laboratório demoram mais de 10 minutos para ligar e travam ao abrir o navegador.',
             'O laboratório é usado em todas as aulas de pesquisa do ensino médio.', '420 alunos do ensino médio', anexo: true);
 
-        $this->abrir(1, 'lucia', 'gerais', 'Planilha para controlar as doações',
+        $this->abrir(1, 'lucia', 'digital', 'Planilha para controlar as doações',
             'Precisamos de uma planilha simples para registrar as doações de alimentos e roupas que recebemos e entregamos.',
             'Hoje o controle é feito em cadernos e se perde com facilidade.', '80 famílias atendidas pela associação');
 

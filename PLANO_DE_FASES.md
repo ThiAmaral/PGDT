@@ -435,6 +435,13 @@ Revisados as rotas, os middlewares, as policies, todos os controllers, os upload
 - **Banco local:** carregado no banco separado `pgdt_demo` (o `pgdt` com os dados de teste das fases não foi alterado); servidor da demonstração na configuração `pgdt-demo` do `.claude/launch.json` (porta 8002). Os arquivos de demonstração ficam na mesma pasta `storage/app/private` do banco `pgdt`, com nomes aleatórios.
 - **Responsividade dos outros perfis:** com as contas de demonstração, 22 telas de estudante, demandante e coordenador medidas em 360, 768 e 1280 px, sem rolagem lateral; as permissões também conferiram (estudante e demandante recebem "Acesso negado" nas demandas de que não participam).
 
+### Roteiro de testes com usuários (2026-10-27)
+- **Documento:** [Roteiro de testes com usuários — PGDT](https://claude.ai/artifact/5jHVvXAESfUNVZuRkJoimT) (Claude Docs, exporta para Word ou PDF). Tem a preparação do ambiente, como conduzir a sessão, as tarefas de cada perfil (demandante D1–D6, estudante E1–E5, coordenador C1–C7, administrador A1–A5, opcional), as perguntas finais e a ficha de registro com a consolidação dos problemas.
+- **Participantes previstos:** 1 demandante, 1 coordenador, 2 estudantes e, opcionalmente, o admin; cerca de 30 minutos cada. A demonstração recomeça do zero antes de cada participante, e pelo menos um faz as tarefas no celular (servidor com `--host=0.0.0.0`).
+- **Ajuste na demonstração:** a demanda "Planilha para controlar as doações" passou do "Demandas Gerais" para o projeto da coordenadora Mariana, para ela ter um pedido novo para a triagem (tarefa C1).
+- **Teste novo:** `test_tarefas_do_roteiro_de_testes_com_usuarios_funcionam` executa as tarefas do roteiro com os dados de demonstração e confirma que todas podem ser concluídas. 202 testes no total, todos passando.
+- **Próximo passo:** o autor aplica os testes e preenche as fichas; os problemas encontrados viram as correções desta fase.
+
 **Critério de conclusão:** sistema implantado e validado com usuários; resultados documentados.
 
 ---
@@ -531,3 +538,4 @@ Detalhes de cada tabela, colunas e regras: [`docs/DER.md`](docs/DER.md).
 | 2026-10-27 | 8 | Rascunho do aviso de privacidade (LGPD) em `/privacidade`, ligado ao rodapé e aos cadastros; conferido no navegador (computador e celular). 196 testes passando. Aguarda a revisão do autor e os dados da UFES. |
 | 2026-10-27 | 8 | Testes de responsividade: 35 telas medidas em celular, tablet e computador. Corrigido o menu do admin, que ficava mais largo que a tela no tablet. Telas dos outros perfis ficam para a conferência com os dados de demonstração. O aviso de privacidade continua como rascunho, aguardando a revisão do autor. |
 | 2026-10-27 | 8 | Dados de demonstração: `DemonstracaoSeeder` com 11 demandas (uma em cada etapa), 14 contas fictícias e passo a passo em `docs/INSTALACAO.md`. Carregado no banco separado `pgdt_demo`; telas de estudante, demandante e coordenador conferidas no celular, tablet e computador. 201 testes passando. |
+| 2026-10-27 | 8 | Roteiro de testes com usuários criado (Claude Docs), com tarefas por perfil, perguntas finais e ficha de registro; tarefas conferidas por um teste automático com os dados de demonstração. 202 testes passando. Aguarda a aplicação dos testes pelo autor. |
